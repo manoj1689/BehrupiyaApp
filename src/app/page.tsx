@@ -77,7 +77,7 @@ export default function HomePage() {
       setGeneratedImage(result.image_url);
 
       // Fetch image dimensions
-      const img = new Image();
+      const img = new window.Image(); // Create a new Image object
       img.src = result.image_url;
       img.onload = () => {
         setImageDimensions({ width: img.width, height: img.height });
