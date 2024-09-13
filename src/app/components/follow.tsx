@@ -18,24 +18,14 @@ export default function Follower() {
             like-minded people.
           </p>
           <div className="flex justify-center md:justify-start space-x-4">
-            <a
-              href="https://apps.apple.com/us/app/imagineart/id1234567890"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=""
-            >
+            <a href="#" target="_blank" rel="noopener noreferrer" className="">
               <img
                 src="/images/New/AStore.png"
                 alt="App Store"
                 className="w-52"
               />
             </a>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.imagineart"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=""
-            >
+            <a href="#" target="_blank" rel="noopener noreferrer" className="">
               <img
                 src="/images/New/GPlay.png"
                 alt="Play Store"
