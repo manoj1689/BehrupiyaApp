@@ -1,15 +1,20 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Header from "./components/header";
-import Footer from "./components/footer";
 import Image from "next/image";
+import { ClipLoader } from "react-spinners";
 
 interface Prompt {
   id: string;
   src: string;
   alt: string;
+}
+
+interface Category {
+  name: string;
+  prompts: Prompt[];
 }
 
 export default function HomePage() {
@@ -20,43 +25,175 @@ export default function HomePage() {
     width: number;
     height: number;
   } | null>(null);
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null);
   const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const imagesPerPage = 9;
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [promptMap, setPromptMap] = useState<Map<string, string>>(new Map());
+  const [positivePrompt, setPositivePrompt] = useState<string | null>(null);
+  const [negativePrompt, setNegativePrompt] = useState<string | null>("");
+  const [selectedCinematic, setSelectedCinematic] =
+    useState<string>("cinematic");
+  // const [selectedImageSize, setSelectedImageSize] = useState<string>("1:1");
+  const [selectedDressStyle, setSelectedDressStyle] =
+    useState<string>("traditional");
+  const cardsRef = useRef<HTMLDivElement | null>(null);
+
+  const [selectedModel, setSelectedModel] = useState("cinematic");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const models = ["cinematic", "artistic", "photographic"];
+
+  const [selectedImageSize, setSelectedImageSize] = useState("512px*512px");
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+
+  const aspectRatios = [
+    { label: "1:1", value: "512px*512px", icon: "□" },
+    { label: "4:3", value: "680px*384px", icon: "▭" },
+    { label: "3:4", value: "384px*680px", icon: "▯" },
+    { label: "3:2", value: "768px*344px", icon: "▭" },
+    { label: "2:3", value: "344px*768px", icon: "▯" },
+    { label: "4:5", value: "408px*640px", icon: "▯" },
+    { label: "5:4", value: "640px*408px", icon: "▭" },
+  ];
+
+  const selectedAspectRatioLabel =
+    aspectRatios.find((ratio) => ratio.value === selectedImageSize)?.label ||
+    "1:1";
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("/data.json");
       const data = await response.json();
-      const images: Prompt[] = data.map((item: any) => ({
-        id: item["Prompt ID"],
-        src: item["Image URL"].startsWith("/")
-          ? item["Image URL"]
-          : `/${item["Image URL"]}`,
-        alt: item["Prompt"],
+
+      const categoryMap: Record<string, Prompt[]> = {};
+
+      data.forEach((item: any) => {
+        Object.keys(item).forEach((category) => {
+          if (!categoryMap[category]) {
+            categoryMap[category] = [];
+          }
+          if (item[category].length > 0) {
+            item[category].forEach((imgData: any) => {
+              categoryMap[category].push({
+                id: imgData["Prompt ID"],
+                src: imgData["Image URL"].startsWith("/")
+                  ? imgData["Image URL"]
+                  : `/${imgData["Image URL"]}`,
+                alt: imgData["Prompt"],
+              });
+            });
+          }
+        });
+      });
+
+      const categoryList = Object.keys(categoryMap).map((name) => ({
+        name,
+        prompts: categoryMap[name],
+        icon: `/icons/${name.toLowerCase().replace(/\s+/g, "-")}.png`,
       }));
-      setPrompts(images);
-      const map = new Map(images.map((p) => [p.id, p.alt]));
-      setPromptMap(map);
+
+      setCategories(categoryList);
+      setPromptMap(
+        new Map(
+          categoryList.flatMap((cat) => cat.prompts.map((p) => [p.id, p.alt]))
+        )
+      );
+
+      if (categoryList.some((cat) => cat.name === "Sikh Culture")) {
+        setSelectedCategory("Sikh Culture");
+      }
+      window.scrollTo(0, 0);
     };
 
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (selectedCategory) {
+      setCurrentPage(1); // Reset page when category changes
+    }
+  }, [selectedCategory]);
+
+  const handleLoadMore = () => {
+    setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  const getVisibleImages = () => {
+    if (!selectedCategory) return [];
+    const category = categories.find((cat) => cat.name === selectedCategory);
+    if (!category) return [];
+
+    const startIndex = (currentPage - 1) * imagesPerPage;
+    const endIndex = startIndex + imagesPerPage;
+    return category.prompts.slice(0, endIndex);
+  };
+
+  const hasMoreImages = () => {
+    if (!selectedCategory) return false;
+    const category = categories.find((cat) => cat.name === selectedCategory);
+    if (!category) return false;
+
+    return category.prompts.length > currentPage * imagesPerPage;
+  };
+
+  const resetParameters = () => {
+    // setUploadedImages([]);
+    setGeneratedImage(null);
+    setImageDimensions(null);
+    // setSelectedCategory(null);
+    setSelectedPrompt(null);
+    setSelectedImageId(null);
+    setPositivePrompt(null);
+    setNegativePrompt("");
+    setSelectedCinematic("cinematic");
+    setSelectedDressStyle("traditional");
+    setSelectedModel("cinematic");
+    setSelectedImageSize("512px*512px");
+    setIsModalOpen(false);
+    setIsModalOpen1(false);
+  };
+
+  const handleGenerateNewImage = () => {
+    resetParameters();
+    window.scrollTo(0, 0);
+  };
+
+  // Parse the selected image size
+  const [imageWidth, imageHeight] = selectedImageSize
+    .split("*")
+    .map((s) => parseInt(s.replace("px", ""), 10));
+
   const handleGenerate = async () => {
-    if (uploadedImages.length === 0 || !selectedPrompt) {
-      alert("Please upload an image and select a prompt.");
+    if (uploadedImages.length === 0 || !positivePrompt) {
+      alert("Please upload an image and enter positive/negative prompts.");
       return;
     }
 
+    const modifiedPrompt = positivePrompt
+      ?.replace(/{cinematic_style}/gi, selectedModel)
+      .replace(/{image_size}/gi, selectedImageSize)
+      .replace(/{dress_style}/gi, selectedDressStyle);
+
+    console.log("Modified Prompt:", modifiedPrompt);
+    console.log("Style:", selectedModel);
+    console.log("Parsed Width:", imageWidth);
+    console.log("Parsed Height:", imageHeight);
+
     const formData = new FormData();
     uploadedImages.forEach((file) => formData.append("files", file));
-    formData.append("prompt", selectedPrompt);
-    formData.append("style", "Photographic (Default)");
+    formData.append("prompt", modifiedPrompt || "");
+    formData.append("style", selectedModel || "");
+    formData.append("width", imageWidth.toString());
+    formData.append("height", imageHeight.toString());
     formData.append("steps", "50");
-    formData.append("negative_prompt", "");
+    formData.append(
+      "negative_prompt",
+      "Multiple faces, nudity, cartoonish, deformed, ugly, blurry, noisy, low-quality, text, watermark, grainy, glitch, distorted, low-resolution, off-center, mutated, disfigured, missing limbs, extra limbs, unnatural lighting, overly stylized, excessive shadows, incorrect anatomy, inappropriate expressions" ||
+        ""
+    );
 
     setIsGenerating(true);
 
@@ -76,8 +213,7 @@ export default function HomePage() {
       const result = await response.json();
       setGeneratedImage(result.image_url);
 
-      // Fetch image dimensions
-      const img = new window.Image(); // Create a new Image object
+      const img = new window.Image();
       img.src = result.image_url;
       img.onload = () => {
         setImageDimensions({ width: img.width, height: img.height });
@@ -89,22 +225,51 @@ export default function HomePage() {
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0) {
-      setUploadedImages(files);
-    }
-  };
-
-  const handleImageRemove = (index: number) => {
-    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleImageSelect = (id: string) => {
     const prompt = promptMap.get(id);
     if (prompt) {
-      setSelectedPrompt(prompt);
+      setPositivePrompt(prompt);
       setSelectedImageId(id);
+      if (cardsRef.current) {
+        const rect = cardsRef.current.getBoundingClientRect();
+        window.scrollTo({
+          top: window.scrollY + rect.top,
+          left: window.scrollX + rect.left,
+          behavior: "smooth",
+        });
+      }
+    }
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
+    setUploadedImages(files); // Reset the uploaded images with the new files
+  };
+
+  // Handle "Change Image" click to clear the uploaded images
+  const handleChangeImage = () => {
+    setUploadedImages([]);
+    // Clear all previously uploaded images
+  };
+
+  const handleImageRemove = (index: number) => {
+    setUploadedImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    const files = Array.from(event.dataTransfer.files);
+    setUploadedImages((prevImages) => [...prevImages, ...files]);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+  };
+
+  const handlePromptChange = (id: string, newPrompt: string) => {
+    setPromptMap((prevMap) => new Map(prevMap.set(id, newPrompt)));
+    if (selectedImageId === id) {
+      setPositivePrompt(newPrompt);
     }
   };
 
@@ -119,169 +284,370 @@ export default function HomePage() {
     }
   };
 
-  const isButtonDisabled = uploadedImages.length === 0 || !selectedPrompt;
+  const isButtonDisabled = uploadedImages.length === 0 || !positivePrompt;
   const buttonClassName = isButtonDisabled
     ? "px-6 py-3 bg-red-600 text-white rounded-lg cursor-not-allowed"
     : "px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors";
 
   return (
     <>
-      <Header />
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-        <div className="text-center py-10 w-full max-w-6xl">
-          <h1 className="text-4xl font-bold text-gray-800 mb-6">
-            Get Accurate, High-Quality, and Realistic Results in Seconds
-          </h1>
-          <p className="text-lg text-gray-600 mb-10">
-            Step Into The Magical Kingdom And Awaken The Wonder!
-          </p>
+      <div className="flex min-h-screen min-w-screen bg-white w-full">
+        <div className=" flex w-2/5">
+          {/* Sidebar */}
+          <div className="1/7 bg-gray-900 flex flex-col items-center py-4 space-y-4">
+            {categories.map((category) => {
+              const isClickable =
+                category.name === "Muslim Influences" ||
+                category.name === "Sikh Culture" ||
+                category.name === "Freedom Fighter" ||
+                category.name === "Identity Mixing" ||
+                category.name === "Indian Superhero" ||
+                category.name === "Religional Attire";
 
-          <div className="grid grid-cols-6 gap-4 mb-8">
-            {prompts.map((prompt) => (
-              <div
-                key={prompt.id}
-                className={`bg-white shadow-lg rounded-lg p-1 cursor-pointer ${
-                  selectedImageId === prompt.id
-                    ? "border-4 border-blue-500"
-                    : ""
-                }`}
-                onClick={() => handleImageSelect(prompt.id)}
-              >
-                <Image
-                  src={prompt.src}
-                  alt={prompt.alt}
-                  width={200} // Set an appropriate width
-                  height={200} // Set an appropriate height
-                  className="w-full h-auto object-cover rounded-lg"
-                />
-              </div>
-            ))}
+              const isSelected = selectedCategory === category.name;
+
+              return (
+                <button
+                  key={category.name}
+                  className={`relative flex flex-col items-center space-y-1 text-white p-2 rounded-lg w-full bg-gray-900 ${
+                    isClickable ? "" : "opacity-50 cursor-not-allowed"
+                  }`}
+                  onClick={() => {
+                    if (isClickable) {
+                      setSelectedCategory(category.name);
+                    }
+                  }}
+                  disabled={!isClickable}
+                >
+                  {/* Change the icon if selected */}
+                  <img
+                    src={`/icons/${
+                      isSelected
+                        ? `${category.name
+                            .toLowerCase()
+                            .replace(/\s+/g, "-")}-00`
+                        : category.name.toLowerCase().replace(/\s+/g, "-")
+                    }.png`}
+                    alt={`${category.name} icon`}
+                    className="w-12 h-12"
+                  />
+                  <span
+                    className={`text-[0.625rem] ${
+                      isSelected ? "text-blue-600" : "text-white"
+                    }`}
+                  >
+                    {category.name}
+                  </span>
+
+                  {/* Add a pointer if the category is selected */}
+                  {isSelected && (
+                    <span className="absolute right-[-8.5px] top-1/2 transform -translate-y-1/2 border-t-8 border-b-8 border-l-8 border-l-black border-t-transparent border-b-transparent" />
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          <div className="flex justify-between w-full max-w-6xl mx-auto mb-8">
-            <div className="w-1/2 bg-white shadow-lg rounded-lg p-6 mr-4">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Drag (Select) 1 or more photos of your face
-              </h2>
+          {/* Main Content Area */}
+          <div className="w-6/7 p-6 bg-white">
+            <h1 className="text-2xl font-bold text-gray-800 mb-1">
+              Recommended Images
+            </h1>
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2"
+              style={{
+                maxHeight: "560px",
+                overflowY: "auto",
+                scrollbarWidth: "thin",
+              }} // Enable auto scrollbar visibility
+            >
+              {getVisibleImages().map((prompt) => (
+                <div
+                  key={prompt.id}
+                  className={`bg-white shadow-lg rounded-lg p-1 cursor-pointer ${
+                    selectedImageId === prompt.id
+                      ? "border-4 border-blue-500"
+                      : ""
+                  }`}
+                  onClick={() => handleImageSelect(prompt.id)}
+                >
+                  <Image
+                    src={prompt.src}
+                    alt={prompt.alt}
+                    width={100}
+                    height={100}
+                    className="w-full h-auto object-cover rounded-lg"
+                  />
+                </div>
+              ))}
+            </div>
+            {hasMoreImages() && (
+              <div className="flex justify-center mt-4">
+                <button
+                  className="px-6 py-2 bg-blue-600 text-white rounded-lg"
+                  onClick={handleLoadMore}
+                >
+                  Load more
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Side Panel */}
+        <div
+          className="w-3/5 p-6 shadow-lg rounded-lg flex flex-col h-screen "
+          style={{ backgroundColor: "#24272c", color: "#ffffff" }}
+        >
+          <div className="p-2 border-2 border-dashed border-gray-300 rounded-lg">
+            {/* Image Upload Section */}
+            <div className="mb-4">
+              {/* <h2 className="text-lg font-semibold mb-2">Upload Image(s)</h2> */}
               <div
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const files = Array.from(e.dataTransfer.files || []);
-                  if (files.length > 0) {
-                    setUploadedImages(files);
-                  }
-                }}
-                onDragOver={(e) => e.preventDefault()}
-                className="flex flex-wrap gap-2 items-center justify-center h-64 border-2 border-dashed border-gray-300 rounded-lg"
+                className="relative w-full min-h-[140px]  rounded-lg text-center hover:bg-gray-100 flex flex-col items-center justify-center"
+                style={{ backgroundColor: "#24272c", color: "#ffffff" }}
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
               >
-                {uploadedImages.length > 0 ? (
-                  uploadedImages.map((file, index) => (
-                    <div
-                      key={index}
-                      className="relative w-1/3 h-32 overflow-hidden bg-gray-200 rounded-lg shadow-md"
-                    >
-                      <Image
-                        src={URL.createObjectURL(file)}
-                        alt={`Uploaded ${index}`}
-                        width={100} // Set an appropriate width
-                        height={100} // Set an appropriate height
-                        className="object-cover h-full w-full"
-                      />
-                      <button
-                        className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                        onClick={() => handleImageRemove(index)}
+                <label className="cursor-pointer flex flex-col items-center">
+                  <img
+                    src="/icons.png"
+                    alt="Upload Icon"
+                    className="mb-2 w-50 h-9"
+                  />
+                  <span className="text-white">Upload Image</span>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(event) => {
+                      handleChangeImage(); // Reset previously uploaded images
+                      handleImageUpload(event); // Upload new images
+                    }}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Display Uploaded Images */}
+                {uploadedImages.length > 0 && (
+                  <div
+                    className="absolute inset-0 flex flex-wrap justify-center gap-2 p-2 rounded-lg overflow-auto"
+                    style={{ backgroundColor: "#24272c" }}
+                  >
+                    {uploadedImages.slice(0, 6).map((file, index) => (
+                      <div
+                        key={index}
+                        className="relative w-24 h-48 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center"
+                        style={{
+                          display: "block",
+                          width: "auto",
+                          height: "100%",
+                          margin: "0 auto",
+                        }}
                       >
-                        &times;
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <label className="flex flex-col items-center justify-center w-full h-full text-center">
-                    <svg
-                      className="w-12 h-12 text-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M7 16l4 4 4-4m4-4l-4-4-4 4m-4 4H4v-6h4v6zm8-6v6h4v-6h-4zM9 10l-4 4h3v4h2v-4h3l-4-4zm12-2a6 6 0 00-6 6v2a6 6 0 0012 0v-2a6 6 0 00-6-6zm-2 6a2 2 0 01-4 0v-2a2 2 0 014 0v2z"
-                      />
-                    </svg>
-                    <span className="mt-2 text-gray-600">
-                      Drag and drop an image here, or click to select
-                    </span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleImageUpload}
-                      className="hidden"
-                    />
-                  </label>
+                        {/* Image Styling */}
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={file.name}
+                          className="w-full h-full object-contain"
+                        />
+
+                        {/* Close Button */}
+                        <button
+                          className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center"
+                          onClick={() => handleImageRemove(index)}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
 
-            <div className="w-1/2 bg-white shadow-lg rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                Generated Image
-              </h2>
-              {isGenerating ? (
-                <div className="flex flex-col items-center justify-center h-64">
+            {/* Models and Aspect Ratio Buttons */}
+            <div className="mb-8">
+              <div className="flex justify-center items-center space-x-4">
+                {/* Models Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsModalOpen(!isModalOpen)}
+                    className="flex items-center  text-white px-4 py-2 rounded-3xl border-4 border-gray-700"
+                    style={{ backgroundColor: "#24272c" }}
+                  >
+                    <span className="mr-2">Models</span>
+                    <span className="text-blue-400">
+                      {models.find(
+                        (model) =>
+                          model.toLowerCase() === selectedModel.toLowerCase()
+                      ) || "Artistic"}
+                    </span>
+                  </button>
+                  {isModalOpen && (
+                    <div className="absolute mt-2 bg-gray-800 text-white py-2 w-48 rounded-lg z-10">
+                      {models.map((model) => (
+                        <button
+                          key={model}
+                          onClick={() => {
+                            setSelectedModel(model.toLowerCase());
+                            setIsModalOpen(false);
+                          }}
+                          className={`block w-full text-left px-4 py-2 hover:bg-gray-600 ${
+                            selectedModel === model.toLowerCase()
+                              ? "bg-gray-600"
+                              : ""
+                          }`}
+                        >
+                          {model}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {/* Change Image Button */}
+                <button
+                  className="px-4 bg-blue-600 text-white flex items-center justify-center py-2 rounded-3xl"
+                  onClick={handleChangeImage} // Clear images on click
+                >
                   <svg
-                    className="animate-spin h-12 w-12 text-blue-600"
+                    className="w-5 h-5 mr-2"
                     xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 0 0"
-                    stroke="currentColor"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
                   >
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M12 2a10 10 0 00-4.285 19.135l1.418-1.418A8 8 0 114 12h-1.5M12 4a8 8 0 00-5.527 13.273M12 6a6 6 0 00-4.24 10.163l1.558-1.558A4 4 0 1112 10h-1.5M12 8a4 4 0 00-2.738 6.952l1.627-1.626A2 2 0 1112 12h-1.5"
+                      fillRule="evenodd"
+                      d="M4 8a1 1 0 011-1h10a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1V8zm1 4v2h10v-2H5zm6-4V5a1 1 0 00-2 0v3H7a1 1 0 100 2h6a1 1 0 100-2h-2z"
+                      clipRule="evenodd"
                     />
                   </svg>
-                  <p className="text-gray-600 mt-2">Generating...</p>
+                  Change Image
+                </button>
+                {/* Aspect Ratio Button */}
+                <button
+                  onClick={() => setIsModalOpen1(true)}
+                  className="flex items-center rounded-3xl border-4 border-gray-700 text-white px-4 py-2"
+                  style={{ backgroundColor: "#24272c" }}
+                >
+                  <span className="mr-2">Aspect Ratio</span>
+                  {/* Display selected aspect ratio */}
+                  <div
+                    className=" px-1 py-[-1] text-white rounded-0 border-2 border-white"
+                    style={{ backgroundColor: "#24272c" }}
+                  >
+                    {selectedAspectRatioLabel}
+                  </div>
+                </button>
+              </div>
+
+              {/* Aspect Ratio Modal */}
+              {isModalOpen1 && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+                  <div className="bg-white rounded-lg p-6 max-w-lg">
+                    <h3 className="text-lg font-bold mb-4">Aspect Ratio</h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      {aspectRatios.map((ratio) => (
+                        <button
+                          key={ratio.label}
+                          onClick={() => {
+                            setSelectedImageSize(ratio.value);
+                            setIsModalOpen1(false);
+                          }}
+                          className={`border rounded-lg px-4 py-2 flex flex-col items-center justify-center ${
+                            selectedImageSize === ratio.value
+                              ? "border-blue-500"
+                              : "border-gray-300"
+                          }`}
+                        >
+                          <span className="text-xl">{ratio.icon}</span>
+                          <span className="mt-2">{ratio.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setIsModalOpen1(false)}
+                      className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
-              ) : generatedImage ? (
-                <div className="relative h-64 w-full">
-                  <Image
+              )}
+            </div>
+
+            {/* Generated Image Section */}
+            <div className="flex-grow flex flex-col justify-between">
+              {/* Image Container with Fixed Height */}
+              <div
+                className="flex-grow flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden"
+                style={{ height: "350px", backgroundColor: "#24272c" }}
+              >
+                {isGenerating ? (
+                  <div className="flex justify-center items-center h-full">
+                    <ClipLoader color="#0000FF" size={50} />
+                  </div>
+                ) : generatedImage ? (
+                  <img
                     src={generatedImage}
                     alt="Generated"
-                    width={imageDimensions?.width || 500} // Set an appropriate width
-                    height={imageDimensions?.height || 500} // Set an appropriate height
-                    className="object-cover rounded-lg"
+                    className="max-w-full max-h-full object-contain"
+                    style={{ height: "100%", width: "auto" }}
                   />
+                ) : (
+                  <div className="text-gray-500 h-full flex items-center justify-center">
+                    No image generated yet.
+                  </div>
+                )}
+              </div>
+
+              {/* Footer Buttons */}
+              {generatedImage && (
+                <div
+                  className="flex space-x-4 p-4"
+                  style={{ backgroundColor: "#24272c" }}
+                >
                   <button
-                    className="absolute bottom-0 right-0 bg-blue-600 text-white px-4 py-2 rounded-lg"
                     onClick={handleDownload}
+                    className="w-1/2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Download
+                    Download Image
+                  </button>
+                  <button
+                    onClick={handleGenerateNewImage}
+                    className="w-1/2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Generate New Image
                   </button>
                 </div>
-              ) : (
-                <div className="flex items-center justify-center h-64 text-gray-600">
-                  No image generated yet.
+              )}
+              {!generatedImage && (
+                <div
+                  className="p-4 flex justify-center items-center h-full"
+                  style={{ backgroundColor: "#24272c" }}
+                >
+                  <button
+                    onClick={() => {
+                      if (isGenerating) {
+                        return;
+                      }
+                      handleGenerate();
+                    }}
+                    className={`p-4 text-white py-2 rounded-lg transition-colors ${
+                      isGenerating
+                        ? "bg-blue-600 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                    }`}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating ? "Generating Image ..." : "Generate Image"}
+                  </button>
                 </div>
               )}
             </div>
           </div>
-
-          <button
-            className={buttonClassName}
-            onClick={handleGenerate}
-            disabled={isButtonDisabled || isGenerating}
-          >
-            Generate Image
-          </button>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

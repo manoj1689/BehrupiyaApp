@@ -18,7 +18,7 @@ app.prepare().then(() => {
       createProxyMiddleware({
         target: "http://122.160.116.97:8080",
         changeOrigin: true,
-        pathRewrite: { "^/api/generate-image": "/generate-image" },
+        pathRewrite: { "^/api/generate-image": "/images" }, // Adjusted to match your URL structure
         onProxyReq: (proxyReq, req, res) => {
           console.log(`Proxying ${req.method} request to ${req.url}`);
         },
@@ -26,6 +26,7 @@ app.prepare().then(() => {
           console.log(
             `Received response with status ${proxyRes.statusCode} for ${req.url}`
           );
+          res.setHeader("Access-Control-Allow-Origin", "*"); // Allowing CORS
         },
         onError: (err, req, res) => {
           console.error(`Error during proxying request: ${err.message}`);

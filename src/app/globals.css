@@ -31,3 +31,24 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, Opera) */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* For WebKit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2); /* Custom color */
+  border-radius: 10px;
+}
