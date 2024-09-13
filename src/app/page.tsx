@@ -5,6 +5,10 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ClipLoader } from "react-spinners";
+import Footer from "./components/footer";
+import Header from "./components/header";
+import Follower from "./components/follow";
+import Pricing from "./components/pricing";
 
 interface Prompt {
   id: string;
@@ -291,6 +295,7 @@ export default function HomePage() {
 
   return (
     <>
+      <Header />
       <div className="flex min-h-screen min-w-screen bg-white w-full">
         <div className=" flex w-2/5">
           {/* Sidebar */}
@@ -648,6 +653,14 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      <div className="mb-2 mt-2">
+        <Follower />
+      </div>
+      <div className="mb-2 mt-2">
+        <Pricing />
+      </div>
+      <Footer />
     </>
   );
 }

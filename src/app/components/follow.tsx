@@ -19,22 +19,28 @@ export default function Follower() {
           </p>
           <div className="flex justify-center md:justify-start space-x-4">
             <a
-              href="#"
-              className="bg-black text-white py-3 px-5 rounded-md flex items-center space-x-2 hover:bg-gray-800"
-            >
-              <i className="fa fa-apple text-2xl"></i>
-              <span>App Store</span>
-            </a>
-            <a
-              href="#"
-              className="bg-white text-black py-3 px-5 rounded-md flex items-center space-x-2 hover:bg-gray-200"
+              href="https://apps.apple.com/us/app/imagineart/id1234567890"
+              target="_blank"
+              rel="noopener noreferrer"
+              className=""
             >
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Google_Play_Store_badge_EN.svg/512px-Google_Play_Store_badge_EN.svg.png"
-                alt="Google Play"
-                className="h-6"
+                src="/images/New/AStore.png"
+                alt="App Store"
+                className="w-52"
               />
-              <span>Google Play</span>
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.imagineart"
+              target="_blank"
+              rel="noopener noreferrer"
+              className=""
+            >
+              <img
+                src="/images/New/GPlay.png"
+                alt="Play Store"
+                className="w-52 "
+              />
             </a>
           </div>
         </div>
