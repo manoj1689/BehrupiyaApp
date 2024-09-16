@@ -10,7 +10,8 @@ import Header from "./components/header";
 import Follower from "./components/follow";
 import Pricing from "./components/pricing";
 import Adver from "./components/Adver";
-
+import { useSession } from "next-auth/react";
+import { handleDeductCredit } from "./components/creditButton";
 interface Prompt {
   id: string;
   src: string;
@@ -23,6 +24,10 @@ interface Category {
 }
 
 export default function HomePage() {
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [credits, setCredits] = useState<number | null>(null);
   const router = useRouter();
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -638,7 +643,16 @@ export default function HomePage() {
                         if (isGenerating) {
                           return;
                         }
+
                         handleGenerate();
+
+                        // Deduct credit after generation
+                        handleDeductCredit(
+                          session?.user?.email!,
+                          setCredits,
+                          setMessage,
+                          setLoading
+                        ); // Make sure session and user email are available
                       }}
                       className={`p-4 text-white py-2 rounded-lg transition-colors ${
                         isGenerating
