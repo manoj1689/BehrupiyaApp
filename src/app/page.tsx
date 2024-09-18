@@ -54,7 +54,7 @@ export default function HomePage() {
 
   const [selectedModel, setSelectedModel] = useState("cinematic");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const models = ["cinematic", "artistic", "photographic"];
+  const models = ["Cinematic", "Artistic", "Photographic"];
 
   const [selectedImageSize, setSelectedImageSize] = useState("512px*512px");
   const [isModalOpen1, setIsModalOpen1] = useState(false);
@@ -303,10 +303,10 @@ export default function HomePage() {
     <>
       <div className="bg-black">
         <Header />
-        <div className="flex h-screen min-w-screen bg-black w-full">
+        <div className="flex h-[620px] min-w-screen bg-black w-full">
           <div className=" flex w-2/5">
             {/* Sidebar */}
-            <div className="1/7 bg-gray-900 flex flex-col items-center py-4 space-y-4 h-[700px]">
+            <div className="1/7 bg-gray-900 flex flex-col items-center py-4 space-y-4 h-[620px]">
               {categories.map((category) => {
                 const isClickable =
                   category.name === "Muslim Influences" ||
@@ -321,8 +321,12 @@ export default function HomePage() {
                 return (
                   <button
                     key={category.name}
-                    className={`relative flex flex-col items-center space-y-1 text-white p-2 rounded-lg w-full bg-gray-900 ${
-                      isClickable ? "" : "opacity-50 cursor-not-allowed"
+                    className={`relative flex flex-col items-center space-y-1 text-white pt-1 pb-1 pl-2 pr-2 rounded-lg w-full ${
+                      isClickable
+                        ? isSelected
+                          ? "bg-gray-900" // Apply this background when selected
+                          : "bg-gray-900" // Default background
+                        : "opacity-50 cursor-not-allowed"
                     }`}
                     onClick={() => {
                       if (isClickable) {
@@ -341,7 +345,7 @@ export default function HomePage() {
                           : category.name.toLowerCase().replace(/\s+/g, "-")
                       }.png`}
                       alt={`${category.name} icon`}
-                      className="w-12 h-12"
+                      className="w-10 h-10"
                     />
                     <span
                       className={`text-[0.625rem] ${
@@ -353,7 +357,7 @@ export default function HomePage() {
 
                     {/* Add a pointer if the category is selected */}
                     {isSelected && (
-                      <span className="absolute right-[-8.5px] top-1/2 transform -translate-y-1/2 border-t-8 border-b-8 border-l-8 border-l-black border-t-transparent border-b-transparent" />
+                      <span className="absolute right-[-8.5px] top-1/2 transform -translate-y-1/2 border-t-8 border-b-8 border-l-8 border-l-gray-900 border-t-transparent border-b-transparent" />
                     )}
                   </button>
                 );
@@ -361,14 +365,14 @@ export default function HomePage() {
             </div>
 
             {/* Main Content Area */}
-            <div className="w-6/7 p-6 bg-white h-[700px]">
+            <div className="w-6/7 p-6 bg-white h-[620px]">
               <h1 className="text-2xl font-bold text-gray-800 mb-1">
                 Recommended Images
               </h1>
               <div
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2"
                 style={{
-                  maxHeight: "560px",
+                  maxHeight: "450px",
                   overflowY: "auto",
                   scrollbarWidth: "thin",
                 }} // Enable auto scrollbar visibility
@@ -386,15 +390,15 @@ export default function HomePage() {
                     <Image
                       src={prompt.src}
                       alt={prompt.alt}
-                      width={100}
-                      height={100}
+                      width={90}
+                      height={90}
                       className="w-full h-auto object-cover rounded-lg"
                     />
                   </div>
                 ))}
               </div>
               {hasMoreImages() && (
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-6">
                   <button
                     className="px-6 py-2 bg-blue-600 text-white rounded-full"
                     onClick={handleLoadMore}
@@ -408,15 +412,15 @@ export default function HomePage() {
 
           {/* Right Side Panel */}
           <div
-            className="w-3/5  border-2 border-dashed border-gray-300 shadow-lg rounded-3xl flex flex-col mr-5"
+            className="w-3/5  border-2 border-dashed border-gray-300 shadow-lg rounded-3xl flex flex-col mr-5 ml-5"
             style={{
               backgroundColor: "#24272c",
               color: "#ffffff",
-              height: "700px",
+              height: "620px",
             }}
           >
             <div className=" rounded-lg flex flex-row items-center justify-end">
-              <div className="flex flex-col items-center justify-end mt-[50px] ml-5 h-[600px] bg-[#35383d] rounded-3xl">
+              <div className="flex flex-col items-center justify-end mt-[30px] ml-5 h-[560px] bg-[#35383d] rounded-3xl">
                 {/* Image Upload Section */}
                 <div className="mb-4 w-full h-[400px] bg-[#35383d] flex justify-center items-center">
                   {/* Image Upload Section */}
@@ -509,7 +513,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Models and Aspect Ratio Buttons */}
-                <div className="mb-8 h-[100px] bg-[#35383d]">
+                <div className="mb-8 h-[80px] bg-[#35383d]">
                   <div className="space-y-4">
                     {/* Models and Aspect Ratio in One Row */}
                     <div className="flex justify-center items-center space-x-4">
@@ -520,8 +524,8 @@ export default function HomePage() {
                           className="flex items-center text-white px-4 py-2 rounded-3xl border-4 border-gray-700"
                           style={{ backgroundColor: "#24272c" }}
                         >
-                          <span className="mr-2">Models</span>
-                          <span className="text-blue-400">
+                          <span className="mr-2 text-sm">Models</span>
+                          <span className="text-blue-400 text-sm">
                             {models.find(
                               (model) =>
                                 model.toLowerCase() ===
@@ -558,9 +562,9 @@ export default function HomePage() {
                           className="flex items-center rounded-3xl border-4 border-gray-700 text-white px-4 py-2"
                           style={{ backgroundColor: "#24272c" }}
                         >
-                          <span className="mr-2">Aspect Ratio</span>
+                          <span className="mr-0 text-sm">Aspect Ratio</span>
                           <div
-                            className="px-1 py-[-1] text-white rounded-0 border-2 border-white"
+                            className="px-1 py-[-1] text-white rounded-0 text-sm ml-1 border-2 border-white"
                             style={{ backgroundColor: "#24272c" }}
                           >
                             {selectedAspectRatioLabel}
@@ -572,7 +576,7 @@ export default function HomePage() {
                     {/* Change Image Button in the Next Row */}
                     <div className="flex justify-center items-center">
                       <button
-                        className="px-4 bg-blue-600 text-white flex items-center justify-center py-2 rounded-3xl"
+                        className="px-4 bg-blue-600 text-white text-sm flex items-center justify-center py-2 rounded-3xl"
                         onClick={handleChangeImage} // Clear images on click
                       >
                         <svg
@@ -596,8 +600,10 @@ export default function HomePage() {
                   {isModalOpen1 && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
                       <div className="bg-white rounded-lg p-6 max-w-lg">
-                        <h3 className="text-lg font-bold mb-4">Aspect Ratio</h3>
-                        <div className="grid grid-cols-3 gap-4">
+                        <h3 className="text-lg text-black font-bold mb-4">
+                          Aspect Ratio
+                        </h3>
+                        <div className="grid grid-cols-3 text-black gap-4">
                           {aspectRatios.map((ratio) => (
                             <button
                               key={ratio.label}
