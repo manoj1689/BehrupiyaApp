@@ -303,10 +303,10 @@ export default function HomePage() {
     <>
       <div className="bg-black">
         <Header />
-        <div className="flex min-h-screen min-w-screen bg-black w-full">
+        <div className="flex h-screen min-w-screen bg-black w-full">
           <div className=" flex w-2/5">
             {/* Sidebar */}
-            <div className="1/7 bg-gray-900 flex flex-col items-center py-4 space-y-4">
+            <div className="1/7 bg-gray-900 flex flex-col items-center py-4 space-y-4 h-[700px]">
               {categories.map((category) => {
                 const isClickable =
                   category.name === "Muslim Influences" ||
@@ -361,7 +361,7 @@ export default function HomePage() {
             </div>
 
             {/* Main Content Area */}
-            <div className="w-6/7 p-6 bg-white">
+            <div className="w-6/7 p-6 bg-white h-[700px]">
               <h1 className="text-2xl font-bold text-gray-800 mb-1">
                 Recommended Images
               </h1>
@@ -408,188 +408,227 @@ export default function HomePage() {
 
           {/* Right Side Panel */}
           <div
-            className="w-3/5 shadow-lg rounded-lg flex flex-col m-4"
-            style={{ backgroundColor: "#24272c", color: "#ffffff" }}
+            className="w-3/5  border-2 border-dashed border-gray-300 shadow-lg rounded-3xl flex flex-col mr-5"
+            style={{
+              backgroundColor: "#24272c",
+              color: "#ffffff",
+              height: "700px",
+            }}
           >
-            <div className=" border-2 border-dashed border-gray-300 rounded-lg">
-              {/* Image Upload Section */}
-              <div className="mb-4">
-                {/* <h2 className="text-lg font-semibold mb-2">Upload Image(s)</h2> */}
-                <div
-                  className="relative w-full min-h-[140px]  rounded-lg text-center hover:bg-gray-100 flex flex-col items-center justify-center"
-                  style={{ backgroundColor: "#24272c", color: "#ffffff" }}
-                  onDrop={handleDrop}
-                  onDragOver={handleDragOver}
-                >
-                  <label className="cursor-pointer flex flex-col items-center">
-                    <img
-                      src="/icons.png"
-                      alt="Upload Icon"
-                      className="mb-2 w-50 h-9"
-                    />
-                    <span className="text-white">Upload Image</span>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(event) => {
-                        handleChangeImage(); // Reset previously uploaded images
-                        handleImageUpload(event); // Upload new images
-                      }}
-                      className="hidden"
-                    />
-                  </label>
+            <div className=" rounded-lg flex flex-row items-center justify-end">
+              <div className="flex flex-col items-center justify-end mt-[50px] ml-5 h-[600px] bg-[#35383d] rounded-3xl">
+                {/* Image Upload Section */}
+                <div className="mb-4 w-full h-[400px] bg-[#35383d] flex justify-center items-center">
+                  {/* Image Upload Section */}
+                  <div
+                    className="relative w-full min-h-[400px] rounded-lg text-center hover:bg-gray-100 flex flex-col items-center justify-center"
+                    style={{ backgroundColor: "#35383d", color: "#ffffff" }}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                  >
+                    <label className="cursor-pointer flex flex-col items-center">
+                      <img
+                        src="/icons.png"
+                        alt="Upload Icon"
+                        className="mb-2 w-16 h-16"
+                      />
+                      <span className="text-white text-xl">Drag here</span>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(event) => {
+                          handleChangeImage(); // Reset previously uploaded images
+                          handleImageUpload(event); // Upload new images
+                        }}
+                        className="hidden"
+                      />
+                    </label>
 
-                  {/* Display Uploaded Images */}
-                  {uploadedImages.length > 0 && (
-                    <div
-                      className="absolute inset-0 flex flex-wrap justify-center gap-2 p-2 rounded-lg overflow-auto"
-                      style={{ backgroundColor: "#24272c" }}
-                    >
-                      {uploadedImages.slice(0, 6).map((file, index) => (
-                        <div
-                          key={index}
-                          className="relative w-24 h-48 bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center"
-                          style={{
-                            display: "block",
-                            width: "auto",
-                            height: "100%",
-                            margin: "0 auto",
-                          }}
+                    {/* Display Uploaded Images */}
+                    {uploadedImages.length > 0 && (
+                      <div
+                        className={`absolute inset-0 p-2 rounded-lg overflow-auto grid gap-2`}
+                        style={{
+                          backgroundColor: "#35383d",
+                          gridTemplateColumns: `repeat(2, 1fr)`, // Default to 2 columns for images 4 and beyond
+                          gridAutoRows: "auto",
+                          gridTemplateRows:
+                            uploadedImages.length <= 3
+                              ? "repeat(3, minmax(0, 1fr))"
+                              : "repeat(auto-fit, minmax(100px, auto))",
+                        }}
+                      >
+                        {uploadedImages.map((file, index) => {
+                          // Determine the number of rows needed
+                          let rowSpan = 1;
+                          if (uploadedImages.length > 3) {
+                            if (index < 3) {
+                              // First 3 images, each in a separate row
+                              rowSpan = 1;
+                            } else if (uploadedImages.length === 4) {
+                              // 4 images: 2 in the first row, 1 in the next two rows
+                              rowSpan = index === 3 ? 1 : 1;
+                            } else if (uploadedImages.length === 5) {
+                              // 5 images: 2 in the first 2 rows, 1 in the last row
+                              rowSpan = index >= 4 ? 1 : 1;
+                            } else if (uploadedImages.length >= 6) {
+                              // 6 or more images: 2 per row
+                              rowSpan = 1;
+                            }
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              className="relative bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center"
+                              style={{
+                                gridRow: `span ${rowSpan}`,
+                              }}
+                            >
+                              {/* Image Styling */}
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                className="w-full h-full object-cover"
+                              />
+
+                              {/* Close Button */}
+                              <button
+                                className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center"
+                                onClick={() => handleImageRemove(index)}
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Models and Aspect Ratio Buttons */}
+                <div className="mb-8 h-[100px] bg-[#35383d]">
+                  <div className="space-y-4">
+                    {/* Models and Aspect Ratio in One Row */}
+                    <div className="flex justify-center items-center space-x-4">
+                      {/* Models Dropdown */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setIsModalOpen(!isModalOpen)}
+                          className="flex items-center text-white px-4 py-2 rounded-3xl border-4 border-gray-700"
+                          style={{ backgroundColor: "#24272c" }}
                         >
-                          {/* Image Styling */}
-                          <img
-                            src={URL.createObjectURL(file)}
-                            alt={file.name}
-                            className="w-full h-full object-contain"
-                          />
+                          <span className="mr-2">Models</span>
+                          <span className="text-blue-400">
+                            {models.find(
+                              (model) =>
+                                model.toLowerCase() ===
+                                selectedModel.toLowerCase()
+                            ) || "Artistic"}
+                          </span>
+                        </button>
+                        {isModalOpen && (
+                          <div className="absolute mt-2 bg-gray-800 text-white py-2 w-48 rounded-lg z-10">
+                            {models.map((model) => (
+                              <button
+                                key={model}
+                                onClick={() => {
+                                  setSelectedModel(model.toLowerCase());
+                                  setIsModalOpen(false);
+                                }}
+                                className={`block w-full text-left px-4 py-2 hover:bg-gray-600 ${
+                                  selectedModel === model.toLowerCase()
+                                    ? "bg-gray-600"
+                                    : ""
+                                }`}
+                              >
+                                {model}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
-                          {/* Close Button */}
-                          <button
-                            className="absolute top-2 right-2 text-white bg-red-600 rounded-full w-6 h-6 flex items-center justify-center"
-                            onClick={() => handleImageRemove(index)}
+                      {/* Aspect Ratio Button */}
+                      <div className="relative">
+                        <button
+                          onClick={() => setIsModalOpen1(true)}
+                          className="flex items-center rounded-3xl border-4 border-gray-700 text-white px-4 py-2"
+                          style={{ backgroundColor: "#24272c" }}
+                        >
+                          <span className="mr-2">Aspect Ratio</span>
+                          <div
+                            className="px-1 py-[-1] text-white rounded-0 border-2 border-white"
+                            style={{ backgroundColor: "#24272c" }}
                           >
-                            &times;
-                          </button>
+                            {selectedAspectRatioLabel}
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Change Image Button in the Next Row */}
+                    <div className="flex justify-center items-center">
+                      <button
+                        className="px-4 bg-blue-600 text-white flex items-center justify-center py-2 rounded-3xl"
+                        onClick={handleChangeImage} // Clear images on click
+                      >
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4 8a1 1 0 011-1h10a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1V8zm1 4v2h10v-2H5zm6-4V5a1 1 0 00-2 0v3H7a1 1 0 100 2h6a1 1 0 100-2h-2z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Change Image
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Aspect Ratio Modal */}
+                  {isModalOpen1 && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
+                      <div className="bg-white rounded-lg p-6 max-w-lg">
+                        <h3 className="text-lg font-bold mb-4">Aspect Ratio</h3>
+                        <div className="grid grid-cols-3 gap-4">
+                          {aspectRatios.map((ratio) => (
+                            <button
+                              key={ratio.label}
+                              onClick={() => {
+                                setSelectedImageSize(ratio.value);
+                                setIsModalOpen1(false);
+                              }}
+                              className={`border rounded-lg px-4 py-2 flex flex-col items-center justify-center ${
+                                selectedImageSize === ratio.value
+                                  ? "border-blue-500"
+                                  : "border-gray-300"
+                              }`}
+                            >
+                              <span className="text-xl">{ratio.icon}</span>
+                              <span className="mt-2">{ratio.label}</span>
+                            </button>
+                          ))}
                         </div>
-                      ))}
+                        <button
+                          onClick={() => setIsModalOpen1(false)}
+                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                        >
+                          Close
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
-
-              {/* Models and Aspect Ratio Buttons */}
-              <div className="mb-8">
-                <div className="flex justify-center items-center space-x-4">
-                  {/* Models Dropdown */}
-                  <div className="relative">
-                    <button
-                      onClick={() => setIsModalOpen(!isModalOpen)}
-                      className="flex items-center  text-white px-4 py-2 rounded-3xl border-4 border-gray-700"
-                      style={{ backgroundColor: "#24272c" }}
-                    >
-                      <span className="mr-2">Models</span>
-                      <span className="text-blue-400">
-                        {models.find(
-                          (model) =>
-                            model.toLowerCase() === selectedModel.toLowerCase()
-                        ) || "Artistic"}
-                      </span>
-                    </button>
-                    {isModalOpen && (
-                      <div className="absolute mt-2 bg-gray-800 text-white py-2 w-48 rounded-lg z-10">
-                        {models.map((model) => (
-                          <button
-                            key={model}
-                            onClick={() => {
-                              setSelectedModel(model.toLowerCase());
-                              setIsModalOpen(false);
-                            }}
-                            className={`block w-full text-left px-4 py-2 hover:bg-gray-600 ${
-                              selectedModel === model.toLowerCase()
-                                ? "bg-gray-600"
-                                : ""
-                            }`}
-                          >
-                            {model}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {/* Change Image Button */}
-                  <button
-                    className="px-4 bg-blue-600 text-white flex items-center justify-center py-2 rounded-3xl"
-                    onClick={handleChangeImage} // Clear images on click
-                  >
-                    <svg
-                      className="w-5 h-5 mr-2"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M4 8a1 1 0 011-1h10a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1V8zm1 4v2h10v-2H5zm6-4V5a1 1 0 00-2 0v3H7a1 1 0 100 2h6a1 1 0 100-2h-2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    Change Image
-                  </button>
-                  {/* Aspect Ratio Button */}
-                  <button
-                    onClick={() => setIsModalOpen1(true)}
-                    className="flex items-center rounded-3xl border-4 border-gray-700 text-white px-4 py-2"
-                    style={{ backgroundColor: "#24272c" }}
-                  >
-                    <span className="mr-2">Aspect Ratio</span>
-                    {/* Display selected aspect ratio */}
-                    <div
-                      className=" px-1 py-[-1] text-white rounded-0 border-2 border-white"
-                      style={{ backgroundColor: "#24272c" }}
-                    >
-                      {selectedAspectRatioLabel}
-                    </div>
-                  </button>
-                </div>
-
-                {/* Aspect Ratio Modal */}
-                {isModalOpen1 && (
-                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
-                    <div className="bg-white rounded-lg p-6 max-w-lg">
-                      <h3 className="text-lg font-bold mb-4">Aspect Ratio</h3>
-                      <div className="grid grid-cols-3 gap-4">
-                        {aspectRatios.map((ratio) => (
-                          <button
-                            key={ratio.label}
-                            onClick={() => {
-                              setSelectedImageSize(ratio.value);
-                              setIsModalOpen1(false);
-                            }}
-                            className={`border rounded-lg px-4 py-2 flex flex-col items-center justify-center ${
-                              selectedImageSize === ratio.value
-                                ? "border-blue-500"
-                                : "border-gray-300"
-                            }`}
-                          >
-                            <span className="text-xl">{ratio.icon}</span>
-                            <span className="mt-2">{ratio.label}</span>
-                          </button>
-                        ))}
-                      </div>
-                      <button
-                        onClick={() => setIsModalOpen1(false)}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-                      >
-                        Close
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-
               {/* Generated Image Section */}
-              <div className="flex-grow flex flex-col justify-between">
+              <div className="flex-grow flex flex-col justify-end">
                 {/* Image Container with Fixed Height */}
                 <div
                   className="flex-grow flex items-center justify-center bg-gray-100 rounded-lg overflow-hidden"
@@ -607,8 +646,13 @@ export default function HomePage() {
                       style={{ height: "100%", width: "auto" }}
                     />
                   ) : (
-                    <div className="text-gray-500 h-full flex items-center justify-center">
-                      No image generated yet.
+                    <div className="text-gray-500 h-full flex flex-col items-center justify-center text-2xl">
+                      <img
+                        src="/icon.png"
+                        alt="Upload Icon"
+                        className="mb-2 w-50 h-50"
+                      />
+                      No image generated
                     </div>
                   )}
                 </div>
