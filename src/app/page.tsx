@@ -345,7 +345,7 @@ export default function HomePage() {
                           : category.name.toLowerCase().replace(/\s+/g, "-")
                       }.png`}
                       alt={`${category.name} icon`}
-                      className="w-10 h-10"
+                      className="w-9 h-10"
                     />
                     <span
                       className={`text-[0.625rem] ${
@@ -366,7 +366,7 @@ export default function HomePage() {
 
             {/* Main Content Area */}
             <div className="w-6/7 p-6 bg-white h-[620px]">
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">
+              <h1 className="text-xl font-normal text-gray-500 mb-1">
                 Recommended Images
               </h1>
               <div
@@ -436,7 +436,7 @@ export default function HomePage() {
                         alt="Upload Icon"
                         className="mb-2 w-16 h-16"
                       />
-                      <span className="text-white text-xl">Drag here</span>
+                      <span className="text-gray-500 text-xl">Drag here</span>
                       <input
                         type="file"
                         multiple
