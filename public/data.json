@@ -115,13 +115,6 @@
         "Reference Image": "p1.png",
         "Output Image": "outputs/output_18.png",
         "Image URL": "images/656a1213-1ddf-479c-b0e0-02ec47cb8d61.png"
-      },
-      {
-        "Prompt ID": 19,
-        "Prompt": "Generate a {cinematic_style} style {image_size} photo of a Sikh family img, in {dress_style} attire, celebrating a festival, joyful expressions, vibrant colors. . 35mm photograph, film, bokeh, professional, 4k, highly detailed",
-        "Reference Image": "p1.png",
-        "Output Image": "outputs/output_19.png",
-        "Image URL": "images/3c615f13-ffe3-4afa-b30a-89e390cbb5a6.png"
       }
     ],
     "Religional Attire": [

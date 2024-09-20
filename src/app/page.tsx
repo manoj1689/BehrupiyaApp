@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import "./globals.css";
 
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -24,6 +25,29 @@ interface Category {
 }
 
 export default function HomePage() {
+  useEffect(() => {
+    // Disable right-click (context menu)
+    const handleContextMenu = (e: { preventDefault: () => any }) =>
+      e.preventDefault();
+
+    // Disable copy (cut/copy/paste)
+    const handleCopyCut = (e: { preventDefault: () => any }) =>
+      e.preventDefault();
+
+    // Add event listeners
+    document.addEventListener("contextmenu", handleContextMenu);
+    document.addEventListener("copy", handleCopyCut);
+    document.addEventListener("cut", handleCopyCut);
+    document.addEventListener("paste", handleCopyCut);
+
+    return () => {
+      // Clean up event listeners
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("copy", handleCopyCut);
+      document.removeEventListener("cut", handleCopyCut);
+      document.removeEventListener("paste", handleCopyCut);
+    };
+  }, []);
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -577,7 +601,19 @@ export default function HomePage() {
                     <div className="flex justify-center items-center">
                       <button
                         className="px-4 bg-blue-600 text-white text-sm flex items-center justify-center py-2 rounded-3xl"
-                        onClick={handleChangeImage} // Clear images on click
+                        onClick={() => {
+                          if (uploadedImages.length > 0) {
+                            // If images exist, trigger the change image functionality
+                            handleChangeImage(); // Clear the uploaded images
+                          } else {
+                            // Check if the element exists before triggering the file input click
+                            const fileInput =
+                              document.getElementById("image-upload-input");
+                            if (fileInput) {
+                              fileInput.click(); // Programmatically click the hidden file input
+                            }
+                          }
+                        }}
                       >
                         <svg
                           className="w-5 h-5 mr-2"
@@ -591,8 +627,23 @@ export default function HomePage() {
                             clipRule="evenodd"
                           />
                         </svg>
-                        Change Image
+                        {uploadedImages.length > 0
+                          ? "Change Image"
+                          : "Upload Images"}
                       </button>
+
+                      {/* Hidden file input for uploading images */}
+                      <input
+                        type="file"
+                        id="image-upload-input"
+                        multiple
+                        accept="image/*"
+                        onChange={(event) => {
+                          handleChangeImage(); // Clear previously uploaded images
+                          handleImageUpload(event); // Upload new images
+                        }}
+                        className="hidden"
+                      />
                     </div>
                   </div>
 

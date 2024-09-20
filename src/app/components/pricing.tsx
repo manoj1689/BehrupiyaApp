@@ -107,7 +107,6 @@ const Pricing = () => {
                 </p>
                 <motion.button
                   whileHover={{ scale: 1.05 }}
-                  onClick={() => setContactUs(true)}
                   className={`text-white px-4 py-4 rounded-xl font-bold text-lg mb-6 w-full ${
                     index === 1 ? "bg-violet-500" : "bg-gray-500"
                   }`}
