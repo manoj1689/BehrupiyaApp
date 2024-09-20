@@ -628,7 +628,7 @@ export default function HomePage() {
                           />
                         </svg>
                         {uploadedImages.length > 0
-                          ? "Change Image"
+                          ? "Remove Image"
                           : "Upload Images"}
                       </button>
 
