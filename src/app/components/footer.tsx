@@ -54,21 +54,26 @@ export default function Footer() {
 
       {/* Bottom Section: Slogan and Social Media Icons */}
       <div className="mt-12 border-t border-gray-700 pt-6 flex flex-col md:flex-row justify-between items-center">
-        <p className="mb-4 md:mb-0 text-center">
-          Endless Possibilities. Just Imagine.
-        </p>
-        <div className="flex space-x-6 text-2xl">
-          <a href="#" className="hover:text-gray-400">
-            <i className="fa fa-facebook"></i>
+        {/* Left Column */}
+        <div className="flex flex-1 justify-start md:justify-center mb-4 md:mb-0">
+          <p className="text-center md:text-left">
+            Endless Possibilities. Just Imagine.
+          </p>
+        </div>
+
+        {/* Right Column */}
+        <div className="flex flex-1 justify-end md:justify-center space-x-6 text-2xl">
+          <a href="#" className="hover:text-gray-500">
+            <i className="fab fa-facebook"></i>
           </a>
-          <a href="#" className="hover:text-gray-400">
-            <i className="fa fa-instagram"></i>
+          <a href="#" className="hover:text-gray-500">
+            <i className="fab fa-instagram"></i>
           </a>
-          <a href="#" className="hover:text-gray-400">
-            <i className="fa fa-twitter"></i>
+          <a href="#" className="hover:text-gray-500">
+            <i className="fab fa-twitter"></i>
           </a>
-          <a href="#" className="hover:text-gray-400">
-            <i className="fa fa-linkedin"></i>
+          <a href="#" className="hover:text-gray-500">
+            <i className="fab fa-linkedin"></i>
           </a>
         </div>
       </div>
