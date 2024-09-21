@@ -53,18 +53,3 @@ body {
   border-radius: 10px;
 }
 
-/* Disable text selection for all elements */
-* {
-  -webkit-user-select: none; /* Chrome, Safari, Opera */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version */
-}
-
-/* Disable image dragging */
-img {
-  -webkit-user-drag: none; /* Chrome, Safari, Opera */
-  user-drag: none; /* Non-prefixed version */
-  pointer-events: none; /* Disable any interaction */
-}
-
