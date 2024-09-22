@@ -275,10 +275,11 @@ export default function HomePage() {
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("handle image called")
     const files = Array.from(event.target.files || []);
     setUploadedImages(files); // Reset the uploaded images with the new files
   };
-
+console.log("lemgth of uploaded Images",uploadedImages.length)
   // Handle "Change Image" click to clear the uploaded images
   const handleChangeImage = () => {
     setUploadedImages([]);
@@ -306,16 +307,23 @@ export default function HomePage() {
     }
   };
 
+  // const handleDownload = () => {
+  //   if (generatedImage) {
+  //     const link = document.createElement("a");
+  //     link.href = generatedImage;
+  //     link.download = "generated-image.png";
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //   }
+  // };
+
   const handleDownload = () => {
     if (generatedImage) {
-      const link = document.createElement("a");
-      link.href = generatedImage;
-      link.download = "generated-image.png";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      window.open(generatedImage, "_blank"); // Open the image in a new tab
     }
   };
+  
 
   const isButtonDisabled = uploadedImages.length === 0 || !positivePrompt;
   const buttonClassName = isButtonDisabled
@@ -327,59 +335,55 @@ export default function HomePage() {
       <div className="bg-black">
         <div className="w-full py-2 text-white text-center">
           <h1 className="text-xl font-sans font-bold uppercase">
-            Unleash your innea
+            Unleash your inner Behrupiya
             <span className="normal-case font-normal">
               {" "}
               - where Tradition meets Technology-
             </span>
           </h1>
         </div>
-       {/* Main Content Area for mobile View */}
-       <div className="block sm:hidden w-full bg-white">
-  <div>
-    <h1 className="text-xl lg:text-2xl font-light text-gray-400 px-2 my-4">
-      Recommended Images
-    </h1>
-    
-   
-    </div>
-   
-  <div className="flex mb-4">
-  <div
-      className="w-11/12 grid grid-flow-col gap-2 overflow-x-auto scroll-smooth "
-    
-    >
-      {getVisibleImages().map((prompt) => (
-        <div
-          key={prompt.id}
-          className={`bg-white shadow-lg rounded-xl cursor-pointer w-32 ${
-            selectedImageId === prompt.id
-              ? "border-[6px]  border-blue-500"
-              : "border-4  border-white"
-          }`}
-          onClick={() => handleImageSelect(prompt.id)}
-        >
-          <Image
-            src={prompt.src}
-            alt={prompt.alt}
-            width={100}
-            height={100}
-            className="w-32 h-auto object-cover rounded-md"
-          />
-        </div>
-      ))}
-    </div>
-    <div    className={` shadow-lg flex w-1/12 justify-end items-center  ${
-        hasMoreImages() ? "bg-blue-600 text-white" : "bg-slate-400 text-white"
-      }`}
-      onClick={handleLoadMore}>
-    <MdKeyboardArrowRight size={40} />
-  
-  </div>
-  </div>
+        {/* Main Content Area for mobile View */}
+        <div className="block sm:hidden w-full bg-white">
+          <div>
+            <h1 className="text-xl lg:text-2xl font-light text-gray-400 px-2 my-4">
+              Recommended Images
+            </h1>
+          </div>
 
-  
-</div>
+          <div className="flex mb-4">
+            <div className="w-11/12 grid grid-flow-col gap-2 overflow-x-auto scroll-smooth ">
+              {getVisibleImages().map((prompt) => (
+                <div
+                  key={prompt.id}
+                  className={`bg-white shadow-lg rounded-xl cursor-pointer w-32 ${
+                    selectedImageId === prompt.id
+                      ? "border-[6px]  border-blue-500"
+                      : "border-4  border-white"
+                  }`}
+                  onClick={() => handleImageSelect(prompt.id)}
+                >
+                  <Image
+                    src={prompt.src}
+                    alt={prompt.alt}
+                    width={100}
+                    height={100}
+                    className="w-32 h-auto object-cover rounded-md"
+                  />
+                </div>
+              ))}
+            </div>
+            <div
+              className={` shadow-lg flex w-1/12 justify-end items-center  ${
+                hasMoreImages()
+                  ? "bg-blue-600 text-white"
+                  : "bg-slate-400 text-white"
+              }`}
+              onClick={handleLoadMore}
+            >
+              <MdKeyboardArrowRight size={40} />
+            </div>
+          </div>
+        </div>
 
         <div className="flex ">
           <div className=" flex  lg:1/4 xl:w-1/3 ">
@@ -511,34 +515,33 @@ export default function HomePage() {
               <div className="flex  flex-col items-center bg-[#464950] rounded-xl xl:w-1/2 2xl:w-2/5 justify-end ">
                 {/* Image Upload Section */}
                 <div className="flex mb-4 w-full justify-center items-center">
-                  <label className="cursor-pointer flex w-full flex-col items-center">
-                    {" "}
-                    {/* Image Upload Section */}
-                    <div
-                      className="relative w-full min-h-[400px]  text-center rounded-lg hover:bg-[#3b3e44] flex flex-col items-center justify-center"
-                      style={{ backgroundColor: "", color: "#ffffff" }}
-                      onDrop={handleDrop}
-                      onDragOver={handleDragOver}
-                    >
-                      <img
-                        src="/icons.png"
-                        alt="Upload Icon"
-                        className="mb-2 w-24 h-24 text-gray-600"
-                      />
-                      <span className="text-gray-500 text-xl">
-                        No Photo edit yet
-                      </span>
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={(event) => {
-                          handleChangeImage(); // Reset previously uploaded images
-                          handleImageUpload(event); // Upload new images
-                        }}
-                        className="hidden"
-                      />
-
+                  {" "}
+                  {/* Image Upload Section */}
+                  <div
+                    className="relative w-full min-h-[400px] text-center rounded-lg hover:bg-[#3b3e44] flex flex-col items-center justify-center"
+                    style={{ color: "#ffffff" }}
+                    onDrop={handleDrop}
+                    onDragOver={handleDragOver}
+                  >
+                    <img
+                      src="/icons.png"
+                      alt="Upload Icon"
+                      className="mb-2 w-24 h-24 text-gray-600"
+                    />
+                    <span className="text-gray-500 text-xl">
+                      No Photo edit yet
+                    </span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(event) => {
+                        handleChangeImage(); // Reset previously uploaded images
+                        handleImageUpload(event); // Upload new images
+                      }}
+                      className="hidden"
+                    />
+                    <label className="cursor-pointer  flex  flex-col items-center">
                       {uploadedImages.length > 0 && (
                         <div
                           className={`absolute inset-0 p-2 rounded-lg overflow-auto grid gap-2`}
@@ -552,47 +555,32 @@ export default function HomePage() {
                                 ? "repeat(2, 1fr)"
                                 : "repeat(3, 1fr)", // Adjust grid columns
                             gridAutoRows: "auto",
-                            gridTemplateRows:
-                              uploadedImages.length === 1
-                                ? "1fr"
-                                : uploadedImages.length === 2
-                                ? "1fr"
-                                : uploadedImages.length === 4 ||
-                                  uploadedImages.length === 6
-                                ? "repeat(2, 1fr)"
-                                : "repeat(3, 1fr)",
                           }}
                         >
-                          {uploadedImages.map((file, index) => {
-                            return (
-                              <div
-                                key={index}
-                                className="relative bg-gray-200 rounded-lg overflow-hidden flex items-center justify-center"
-                                style={{
-                                  gridRow: `span 1`,
-                                }}
-                              >
-                                {/* Image Styling */}
-                                <img
-                                  src={URL.createObjectURL(file)}
-                                  alt={file.name}
-                                  className="w-full h-full object-contain bg-[#35383d]"
-                                />
+                          {uploadedImages.map((file, index) => (
+                            <div
+                              key={index}
+                              className="relative bg-gray-200  rounded-lg overflow-hidden flex items-center justify-center"
+                            >
+                              {/* Image Styling */}
+                              <img
+                                src={URL.createObjectURL(file)}
+                                alt={file.name}
+                                className="w-full h-full object-contain bg-[#35383d]"
+                              />
 
-                                {/* Close Button */}
-
-                                <RiCloseCircleFill
-                                  size={30}
-                                  className="absolute top-2 right-2 "
-                                  onClick={() => handleImageRemove(index)}
-                                />
-                              </div>
-                            );
-                          })}
+                              {/* Close Button */}
+                              <RiCloseCircleFill
+                                size={30}
+                                className="absolute top-2 right-2 cursor-pointer"
+                                onClick={() => handleImageRemove(index)} // Remove the image
+                              />
+                            </div>
+                          ))}
                         </div>
-                      )}
-                    </div>
-                  </label>
+                      )}{" "}
+                    </label>
+                  </div>
                 </div>
 
                 {/* Models and Aspect Ratio Buttons */}
@@ -668,22 +656,17 @@ export default function HomePage() {
                       <button
                         className="w-full m-4 bg-blue-600 text-white text-sm flex items-center justify-center py-2 gap-5 rounded-3xl"
                         onClick={() => {
-                          if (uploadedImages.length > 0) {
-                            // If images exist, trigger the change image functionality
-                            handleChangeImage(); // Clear the uploaded images
-                          } else {
-                            // Check if the element exists before triggering the file input click
-                            const fileInput =
-                              document.getElementById("image-upload-input");
-                            if (fileInput) {
-                              fileInput.click(); // Programmatically click the hidden file input
-                            }
+                          // Trigger file input click to upload/change images
+                          const fileInput =
+                            document.getElementById("image-upload-input");
+                          if (fileInput) {
+                            fileInput.click(); // Programmatically click the hidden file input
                           }
                         }}
                       >
                         <MdFileUpload size={36} />
                         {uploadedImages.length > 0
-                          ? "Remove Image"
+                          ? "Change Images"
                           : "Upload Images"}
                       </button>
 
@@ -691,11 +674,11 @@ export default function HomePage() {
                       <input
                         type="file"
                         id="image-upload-input"
-                        multiple
+                        multiple={true} // Only allow one image to be uploaded at a time
                         accept="image/*"
                         onChange={(event) => {
-                          handleChangeImage(); // Clear previously uploaded images
-                          handleImageUpload(event); // Upload new images
+                          
+                          handleImageUpload(event); // Upload new image, replacing the old one
                         }}
                         className="hidden"
                       />
@@ -754,7 +737,7 @@ export default function HomePage() {
                     <img
                       src={generatedImage}
                       alt="Generated"
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full rounded-lg object-contain"
                       style={{ height: "100%", width: "auto" }}
                     />
                   ) : (
@@ -768,21 +751,24 @@ export default function HomePage() {
                 {/* Footer Buttons */}
                 {generatedImage && (
                   <div
-                    className="flex space-x-4 p-4"
+                    className="flex flex-col gap-5 justify-center items-center m-4"
                     style={{ backgroundColor: "#24272c" }}
                   >
                     <button
-                      onClick={handleDownload}
-                      className="w-1/2 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 transition-colors"
-                    >
-                      Download Image
-                    </button>
-                    <button
                       onClick={handleGenerateNewImage}
-                      className="w-1/2 bg-green-600 text-white py-2 rounded-full hover:bg-green-700 transition-colors"
+                      className="flex w-full sm:w-3/4 bg-blue-600 justify-center text-white py-4 rounded-full hover:bg-sky-700 transition-colors"
                     >
-                      Generate New Image
+                      Re-Genreate
                     </button>
+
+                    <div
+                      onClick={handleDownload}
+                      className="flex w-full justify-center items-center text-white"
+                    >
+                      <span className="inline-block border-b-2 border-white">
+                        Download Image
+                      </span>
+                    </div>
                   </div>
                 )}
                 {!generatedImage && (
@@ -977,41 +963,41 @@ export default function HomePage() {
                         </button>
                       </div>
                       <div className="hidden lg:block w-full justify-center items-center">
-                      <button
-                        className="w-full  bg-blue-600  text-white text-sm flex items-center justify-center py-4  rounded-full"
-                        onClick={() => {
-                          if (uploadedImages.length > 0) {
-                            // If images exist, trigger the change image functionality
-                            handleChangeImage(); // Clear the uploaded images
-                          } else {
-                            // Check if the element exists before triggering the file input click
-                            const fileInput =
-                              document.getElementById("image-upload-input");
-                            if (fileInput) {
-                              fileInput.click(); // Programmatically click the hidden file input
+                        <button
+                          className="w-full  bg-blue-600  text-white text-sm flex items-center justify-center py-4  rounded-full"
+                          onClick={() => {
+                            if (uploadedImages.length > 0) {
+                              // If images exist, trigger the change image functionality
+                              handleChangeImage(); // Clear the uploaded images
+                            } else {
+                              // Check if the element exists before triggering the file input click
+                              const fileInput =
+                                document.getElementById("image-upload-input");
+                              if (fileInput) {
+                                fileInput.click(); // Programmatically click the hidden file input
+                              }
                             }
-                          }
-                        }}
-                      >
-                        <MdFileUpload size={30} />
-                        {uploadedImages.length > 0
-                          ? "Remove Image"
-                          : "Upload Images"}
-                      </button>
+                          }}
+                        >
+                          <MdFileUpload size={30} />
+                          {uploadedImages.length > 0
+                            ? "Remove Image"
+                            : "Upload Images"}
+                        </button>
 
-                      {/* Hidden file input for uploading images */}
-                      <input
-                        type="file"
-                        id="image-upload-input"
-                        multiple
-                        accept="image/*"
-                        onChange={(event) => {
-                          handleChangeImage(); // Clear previously uploaded images
-                          handleImageUpload(event); // Upload new images
-                        }}
-                        className="hidden"
-                      />
-                    </div>
+                        {/* Hidden file input for uploading images */}
+                        <input
+                          type="file"
+                          id="image-upload-input"
+                          multiple
+                          accept="image/*"
+                          onChange={(event) => {
+                            handleChangeImage(); // Clear previously uploaded images
+                            handleImageUpload(event); // Upload new images
+                          }}
+                          className="hidden"
+                        />
+                      </div>
                     </div>
 
                     {/* Change Image Button in the Next Row */}
@@ -1105,7 +1091,7 @@ export default function HomePage() {
                     <img
                       src={generatedImage}
                       alt="Generated"
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full rounded-lg object-contain"
                       style={{ height: "100%", width: "auto" }}
                     />
                   ) : (
@@ -1119,21 +1105,24 @@ export default function HomePage() {
                 {/* Footer Buttons */}
                 {generatedImage && (
                   <div
-                    className="flex space-x-4 sm:p-4"
+                    className="flex flex-col gap-5 justify-center items-center m-4"
                     style={{ backgroundColor: "#24272c" }}
                   >
                     <button
-                      onClick={handleDownload}
-                      className="w-full md:w-1/2 bg-blue-600 text-white py-2 rounded-full hover:bg-blue-700 transition-colors"
-                    >
-                      Download Image
-                    </button>
-                    <button
                       onClick={handleGenerateNewImage}
-                      className="w-full md:w-1/2 bg-green-600 text-white py-2 rounded-full hover:bg-green-700 transition-colors"
+                      className="flex w-full sm:w-3/4 bg-blue-600 justify-center text-white py-4 rounded-full hover:bg-sky-700 transition-colors"
                     >
-                      Generate New Image
+                      Re-Genreate
                     </button>
+
+                    <div
+                      onClick={handleDownload}
+                      className="flex w-full justify-center items-center text-white"
+                    >
+                      <span className="inline-block border-b-2 border-white">
+                        Download Image
+                      </span>
+                    </div>
                   </div>
                 )}
                 {!generatedImage && (

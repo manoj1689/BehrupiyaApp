@@ -100,7 +100,7 @@ const CreditButton: React.FC = () => {
           );
 
           // Update credits state
-          setCredits(verifyResponse.data.credits);
+          setCredits(10);
           setMessage(
             `Credits added! New balance: ${verifyResponse.data.credits}`
           );
