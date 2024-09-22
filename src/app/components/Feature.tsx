@@ -510,8 +510,8 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
           </div>
 
           {/* Right Side Panel for large desktop */}
-          <div className="hidden xl:block w-2/3">
-            <div className=" flex w-11/12 mx-auto mb-8 p-8 gap-10 border-4 border-dotted border-gray-500 bg-[#24272c] shadow-lg rounded-3xl  flex-row items-center justify-end">
+          <div className="hidden xl:block  w-2/3">
+            <div className=" flex w-11/12 my-12 mx-auto  p-8 gap-10 border-4 border-dotted border-gray-500 bg-[#24272c] shadow-lg rounded-3xl  flex-row items-center justify-end">
               <div className="flex  flex-col items-center bg-[#464950] rounded-xl xl:w-1/2 2xl:w-2/5 justify-end ">
                 {/* Image Upload Section */}
                 <div className="flex mb-4 w-full justify-center items-center">
@@ -808,7 +808,7 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
           </div>
           {/* Laptop screens resolutions   */}
           <div className="block xl:hidden w-full sm:w-3/4 px-2 ">
-            <div className=" flex flex-col w-full sm:w-11/12 mx-auto mb-8  p-4 md:p-8 gap-10 border-4 border-dotted border-gray-500 bg-[#24272c] shadow-lg rounded-3xl   items-center justify-end">
+            <div className=" flex flex-col w-full sm:w-11/12 mx-auto my-4 mb-8  p-4 md:p-8 gap-10 border-4 border-dotted border-gray-500 bg-[#24272c] shadow-lg rounded-3xl   items-center justify-end">
               <div className="flex  flex-col items-center bg-[#464950] rounded-xl w-full justify-end ">
                 {/* Image Upload Section */}
                 <div className="flex mb-4 w-full justify-center items-center">
