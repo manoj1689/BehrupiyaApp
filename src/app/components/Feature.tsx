@@ -235,7 +235,7 @@ export default function HomePage() {
     setIsGenerating(true);
 
     try {
-      const response = await fetch("/api/generate-image", {
+      const response = await fetch("https://api/generate-image", {
         method: "POST",
         body: formData,
         headers: {
