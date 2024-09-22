@@ -12,6 +12,7 @@ import { div } from "framer-motion/client";
 
 export default function Header() {
   const { data: session } = useSession();
+  console.log(session)
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const togglePopover = () => {
@@ -19,9 +20,9 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full p-4 flex justify-between items-center shadow-md border-b border-white bg-gradient-to-b from-gray-900 to-black">
+    <header className="w-full  py-4  flex justify-between items-center shadow-md border-b border-white bg-gradient-to-b from-gray-900 to-black">
       {/* Left: Logo */}
-      <div className="flex w-1/3 sm:w-1/6 justify-center items-center">
+      <div className="flex w-1/2  sm:w-1/3 px-4  md:w-1/4 justify-center items-center">
         <Image
           src={BehrupiyaLogo}
           alt="User Profile"
@@ -30,7 +31,7 @@ export default function Header() {
       </div>
 
       {/* Center: Navigation Links */}
-      <div className="hidden md:flex space-x-8 text-white text-sm font-medium justify-center items-center w-4/6">
+      <div className="hidden md:flex  text-white text-sm font-medium justify-center gap-4 lg:gap-8 items-center w-2/4">
         <a href="#" className="hover:text-gray-300 transition duration-200">
           Blog
         </a>
@@ -46,8 +47,8 @@ export default function Header() {
       </div>
 
       {/* Right: Sign In and Launch App buttons */}
-      <div className="flex sm:space-x-4 justify-end sm:justify-center items-center w-2/3 sm:w-1/6">
-        <div className="flex flex-row space-x-6 justify-end items-center">
+      <div className="flex sm:space-x-4 justify-end mr-4 items-center w-1/2 sm:w-2/3  md:w-1/4">
+        <div className="flex flex-row  justify-end items-center">
           <div>
             <CreditButton />
           </div>
@@ -97,13 +98,13 @@ export default function Header() {
                 <div>
                   <button
                     onClick={() => signIn("google")}
-                    className="flex  text-white items-center  justify-center"
+                    className="flex  text-white items-center text-sm sm:text-md  text-nowrap justify-center"
                   >
                     Sign In
                   </button>
                 </div>
                 <div>
-                  <button className="flex p-2 rounded-full bg-gradient-to-r from-blue-400 to-blue-600 text-white text-md font-medium  items-center justify-center">
+                  <button className="flex p-2 rounded-full bg-gradient-to-r text-sm sm:text-md text-nowrap from-blue-400 to-blue-600 text-white text-md font-medium  items-center justify-center">
                     Launch App
                   </button>
                 </div>

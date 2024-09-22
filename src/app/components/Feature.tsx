@@ -10,8 +10,10 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ClipLoader } from "react-spinners";
 import { IoCameraSharp } from "react-icons/io5";
-import { useSession } from "next-auth/react";
+import { useSession,signIn } from "next-auth/react";
 import { handleDeductCredit } from "../components/creditButton";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 interface Prompt {
   id: string;
   src: string;
@@ -200,10 +202,12 @@ export default function HomePage() {
     .map((s) => parseInt(s.replace("px", ""), 10));
 
   const handleGenerate = async () => {
-    if (uploadedImages.length === 0 || !positivePrompt) {
-      alert("Please upload an image and enter positive/negative prompts.");
-      return;
-    }
+    // if (uploadedImages.length === 0 || !positivePrompt) {
+    //   alert("Please upload an image and enter positive/negative prompts.");
+    //   return;
+    // }
+
+
 
     const modifiedPrompt = positivePrompt
       ?.replace(/{cinematic_style}/gi, selectedModel)
@@ -324,7 +328,32 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
     }
   };
   
+  const handleGenerateImage = () => {
+    if (uploadedImages.length === 0) {
+      toast.error("Please upload an image."); // Show error toast
+      return;
+    }
 
+    if (!positivePrompt) {
+      toast.error("Please enter positive/negative prompts."); // Show error toast
+      return;
+    }
+    if (!session) {
+      signIn("google"); // Redirects to Google sign-in
+      return;
+    }
+
+    // Proceed with image generation if session exists
+    handleGenerate();
+
+    // Deduct credit after generation
+    handleDeductCredit(
+      session?.user?.email!,
+      setCredits,
+      setMessage,
+      setLoading
+    );
+  };
   const isButtonDisabled = uploadedImages.length === 0 || !positivePrompt;
   const buttonClassName = isButtonDisabled
     ? "px-6 py-3 bg-red-600 text-white rounded-lg cursor-not-allowed"
@@ -333,6 +362,17 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
   return (
     <>
       <div className="bg-black">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
         <div className="w-full py-2 text-white text-center">
           <h1 className="text-xl font-sans font-bold uppercase">
             Unleash your inner Behrupiya
@@ -771,39 +811,35 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
                     </div>
                   </div>
                 )}
-                {!generatedImage && (
-                  <div
-                    className="p-4 flex justify-center items-center h-full"
-                    style={{ backgroundColor: "#24272c" }}
-                  >
-                    <button
-                      onClick={() => {
-                        if (isGenerating) {
-                          return;
-                        }
+            {!generatedImage && (
+      <div
+        className="p-4 flex justify-center items-center h-full"
+        style={{ backgroundColor: "#24272c" }}
+      >
+        <button
+          onClick={() => {
+            if (isGenerating) {
+              return; // Prevent multiple generations if already in progress
+            }
 
-                        handleGenerate();
+            handleGenerateImage(); // Check session before generating
 
-                        // Deduct credit after generation
-                        handleDeductCredit(
-                          session?.user?.email!,
-                          setCredits,
-                          setMessage,
-                          setLoading
-                        ); // Make sure session and user email are available
-                      }}
-                      className={` text-white p-4  w-2/3 mt-20 rounded-full transition-colors ${
-                        isGenerating
-                          ? "bg-blue-600 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                      disabled={isGenerating}
-                    >
-                      {isGenerating ? "Generating Image ..." : "Generate Image"}
-                    </button>
-                  </div>
-                )}
+          }}
+          className={`text-white p-4 w-full md:w-2/3 mt-20 rounded-full transition-colors ${
+            isGenerating
+              ? "bg-blue-600 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+          disabled={isGenerating}
+        >
+          {isGenerating ? "Generating Image ..." : "Generate Image"}
+        </button>
+      </div>
+    )}
+                     {/* Add ToastContainer to render toast notifications */}
+  
               </div>
+              
             </div>
           </div>
           {/* Laptop screens resolutions   */}
@@ -1125,38 +1161,32 @@ console.log("lemgth of uploaded Images",uploadedImages.length)
                     </div>
                   </div>
                 )}
-                {!generatedImage && (
-                  <div
-                    className="p-4 flex justify-center items-center h-full"
-                    style={{ backgroundColor: "#24272c" }}
-                  >
-                    <button
-                      onClick={() => {
-                        if (isGenerating) {
-                          return;
-                        }
+  
+  {!generatedImage && (
+      <div
+        className="p-4 flex justify-center items-center h-full"
+        style={{ backgroundColor: "#24272c" }}
+      >
+        <button
+          onClick={() => {
+            if (isGenerating) {
+              return; // Prevent multiple generations if already in progress
+            }
 
-                        handleGenerate();
+            handleGenerateImage(); // Check session before generating
 
-                        // Deduct credit after generation
-                        handleDeductCredit(
-                          session?.user?.email!,
-                          setCredits,
-                          setMessage,
-                          setLoading
-                        ); // Make sure session and user email are available
-                      }}
-                      className={` text-white p-4  w-full md:w-2/3 mt-20 rounded-full transition-colors ${
-                        isGenerating
-                          ? "bg-blue-600 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700"
-                      }`}
-                      disabled={isGenerating}
-                    >
-                      {isGenerating ? "Generating Image ..." : "Generate Image"}
-                    </button>
-                  </div>
-                )}
+          }}
+          className={`text-white p-4 w-full md:w-2/3 mt-20 rounded-full transition-colors ${
+            isGenerating
+              ? "bg-blue-600 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+          }`}
+          disabled={isGenerating}
+        >
+          {isGenerating ? "Generating Image ..." : "Generate Image"}
+        </button>
+      </div>
+    )}
               </div>
             </div>
           </div>
