@@ -502,13 +502,12 @@ export default function HomePage() {
                   }} // Enable auto scrollbar visibility
                 >
                   {getVisibleImages().map((prompt) => (
-                    <div className="flex flex-col">
+                    <div key={prompt.id} className="flex flex-col">
                       <div
-                        key={prompt.id}
-                        className={`bg-white shadow-lg rounded-xl  cursor-pointer ${
+                        className={`bg-white shadow-lg rounded-xl cursor-pointer ${
                           selectedImageId === prompt.id
-                            ? "border-[6px]  border-blue-500"
-                            : "border-4  border-white"
+                            ? "border-[6px] border-blue-500"
+                            : "border-4 border-white"
                         }`}
                         onClick={() => handleImageSelect(prompt.id)}
                       >
@@ -1025,7 +1024,9 @@ export default function HomePage() {
                         <div className="px-1 text-white rounded-0 text-xs sm:text-sm md:text-md ml-1 border-2 border-white">
                           {selectedAspectRatioLabel}
                         </div>
-                        <span className="hidden sm:block ml-2 text-xs sm:text-sm md:text-md">Aspect Ratio</span>
+                        <span className="hidden sm:block ml-2 text-xs sm:text-sm md:text-md">
+                          Aspect Ratio
+                        </span>
                         <div className="block sm:hidden flex-col ml-2 text-xs sm:text-sm md:text-md py-1">
                           <div>Aspect</div>
                           <div>Ratio</div>
