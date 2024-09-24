@@ -7,7 +7,7 @@ import Follower from "./components/follow";
 import Pricing from "./components/pricing";
 import Adver from "./components/Adver";
 import Feature from "./components/Feature";
-
+import Chatbot from "./components/Chatbot/Chatbot";
 export default function HomePage() {
   return (
     <>
@@ -15,7 +15,7 @@ export default function HomePage() {
         <Header />
 
         <Feature />
-
+        <Chatbot/>
         <Adver />
 
         <Follower />
