@@ -12,7 +12,7 @@ import { div } from "framer-motion/client";
 
 export default function Header() {
   const { data: session } = useSession();
-  console.log(session)
+  console.log(session);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const togglePopover = () => {
@@ -47,12 +47,19 @@ export default function Header() {
       </div>
 
       {/* Right: Sign In and Launch App buttons */}
-      <div className="flex sm:space-x-4 justify-end mr-4 items-center w-1/2 sm:w-2/3  md:w-1/4">
-        <div className="flex flex-row  justify-end items-center">
-          <div>
-            <CreditButton />
-          </div>
-          <nav className="flex items-center space-x-4">
+      <div className="flex  justify-end mr-4 items-center w-1/2 sm:w-2/3  md:w-1/4">
+        <div className="flex justify-center items-center gap-3 ">
+          {session ? (
+            <>
+              <div className="">
+                <CreditButton />
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+
+          <nav className="flex justify-center items-center space-x-4">
             {/* Show user profile image or Sign In button */}
             {session ? (
               <Popover
@@ -88,13 +95,20 @@ export default function Header() {
                 )}
                 onClickOutside={() => setIsPopoverOpen(false)}
               >
-                <div onClick={togglePopover} className="cursor-pointer bg-white rounded-full p-2">
+                <div
+                  onClick={togglePopover}
+                  className="cursor-pointer bg-white rounded-full p-2"
+                >
+                  
                   <FaUser size={20} color="black" />
+               
+                
                 </div>
+                
               </Popover>
             ) : (
               <>
-                <div></div>
+             
                 <div>
                   <button
                     onClick={() => signIn("google")}

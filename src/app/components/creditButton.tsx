@@ -1,10 +1,8 @@
-// components/CreditButton.tsx
-"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { loadRazorpayScript } from "../../utils/razorpay"; // Utility to load Razorpay script
-
+import { IoMdAddCircleOutline } from "react-icons/io";
 // Function to deduct a credit, exported separately
 const handleDeductCredit = async (
   email: string,
@@ -124,19 +122,27 @@ const CreditButton: React.FC = () => {
   };
 
   return (
-    <div>
-      <p className="mb-2 text-sm text-white">
-        {credits !== null ? `Credits: ${credits}` : " "}
-      </p>
-      {credits === 0 ? (
+    <div className="flex justify-center items-center ">
+      <div className=" flex gap-2 p-2 rounded-full  text-sm text-white bg-sky-600">
+      <span><IoMdAddCircleOutline size={20} color="white"/></span>
+      <span>  {credits !== null && credits !==0 ? `Credits: ${credits}` : ""}</span>
+      
+      </div>
+
+      {/* If credits are 0, show "Add Credit" button */}
+      {credits === 0 && (
         <button
           onClick={handleAddCredit}
           disabled={loading}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300"
+          className="bg-red-400 text-white text-sm px-4 py-2 flex gap-2 justify-center items-center rounded-full hover:bg-red-500 transition duration-300"
         >
-          {loading ? "Processing..." : "Buy 10 Credits for Rs 1"}
+          <span><IoMdAddCircleOutline size={20} color="white"/></span>
+          <span>{loading ? "Processing..." : "Add credit"}</span>
         </button>
-      ) : (
+      )}
+
+      {/* Show "Deduct Credit" button only if credits are greater than 0 */}
+      {/* {credits !== null && credits > 0 && (
         <button
           onClick={() =>
             handleDeductCredit(
@@ -147,15 +153,16 @@ const CreditButton: React.FC = () => {
             )
           }
           disabled={loading}
-          style={{ display: "none" }}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300"
         >
-          {/* {loading ? "Updating..." : "Deduct Credit"} */}
+          {loading ? "Updating..." : "Deduct Credit"}
         </button>
-      )}
-      {/* {message && <p className="mt-2 text-sm text-gray-700">{message}</p>} */}
+      )} */}
+{/* 
+      {message && <p className="mt-2 text-sm text-gray-700">{message}</p>} */}
     </div>
   );
 };
 
 export { CreditButton, handleDeductCredit };
+
