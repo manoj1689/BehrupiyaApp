@@ -19,6 +19,7 @@ interface Prompt {
   id: string;
   src: string;
   alt: string;
+  name:string;
 }
 
 interface Category {
@@ -119,6 +120,7 @@ export default function HomePage() {
                   ? imgData["Image URL"]
                   : `/${imgData["Image URL"]}`,
                 alt: imgData["Prompt"],
+                name:imgData["Name"]
               });
             });
           }
@@ -132,6 +134,7 @@ export default function HomePage() {
       }));
 
       setCategories(categoryList);
+      
       setPromptMap(
         new Map(
           categoryList.flatMap((cat) => cat.prompts.map((p) => [p.id, p.alt]))
@@ -392,11 +395,12 @@ export default function HomePage() {
           <div className="flex mb-4">
             <div className="w-11/12 grid grid-flow-col gap-2 overflow-x-auto scroll-smooth ">
               {getVisibleImages().map((prompt) => (
-                <div
+                <div className="flex flex-col">
+                   <div
                   key={prompt.id}
-                  className={`bg-white shadow-lg rounded-xl cursor-pointer w-32 ${
+                  className={`bg-white shadow-lg rounded-xl cursor-pointer w-32 m-2 ${
                     selectedImageId === prompt.id
-                      ? "border-[6px]  border-blue-500"
+                      ? "scale-100  shadow-[0_0_15px_4px_rgba(59,130,246,1)]"
                       : "border-4  border-white"
                   }`}
                   onClick={() => handleImageSelect(prompt.id)}
@@ -409,6 +413,11 @@ export default function HomePage() {
                     className="w-32 h-auto object-cover rounded-md"
                   />
                 </div>
+                 <div className="flex text-gray-500 font-normal text-sm  pb-2 justify-center">
+                 {prompt.name}
+               </div>
+                </div>
+             
               ))}
             </div>
             <div
@@ -504,9 +513,9 @@ export default function HomePage() {
                   {getVisibleImages().map((prompt) => (
                     <div key={prompt.id} className="flex flex-col">
                       <div
-                        className={`bg-white shadow-lg rounded-xl cursor-pointer ${
+                        className={`bg-white shadow-lg rounded-xl cursor-pointer  ${
                           selectedImageId === prompt.id
-                            ? "border-[6px] border-blue-500"
+                            ? "scale-100 border-4 border-blue-400  shadow-[0_0_15px_4px_rgba(59,130,246,1)]"
                             : "border-4 border-white"
                         }`}
                         onClick={() => handleImageSelect(prompt.id)}
@@ -519,8 +528,8 @@ export default function HomePage() {
                           className="w-full h-auto object-cover rounded-md"
                         />
                       </div>
-                      <div className="flex text-gray-500 font-normal justify-center">
-                        xyz
+                      <div className="flex text-gray-500 font-normal text-lg justify-center">
+                        {prompt.name}
                       </div>
                     </div>
                   ))}
