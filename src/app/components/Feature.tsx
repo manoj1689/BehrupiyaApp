@@ -376,9 +376,9 @@ export default function HomePage() {
           pauseOnHover
         />
         <div className="w-full p-2 text-white text-center">
-          <h1 className="text-lg:sm:text-xl font-sans font-bold uppercase">
+          <h1 className="text-lg:sm:text-xl font-raleway font-bold uppercase">
             Unleash your inner Behrupiya
-            <span className="normal-case font-normal">
+            <span className="normal-case font-raleway font-normal">
               {" "}
               - where Tradition meets Technology-
             </span>
@@ -387,7 +387,7 @@ export default function HomePage() {
         {/* Main Content Area for mobile View */}
         <div className="block sm:hidden w-full bg-white">
           <div>
-            <h1 className="text-lg sm:text-xl lg:text-2xl font-light text-gray-400 px-2  sm:my-4">
+            <h1 className="text-xl lg:text-2xl font-raleway font-normal text-gray-500 px-4 sm:my-4">
               Recommended Images
             </h1>
           </div>
@@ -395,16 +395,17 @@ export default function HomePage() {
           <div className="flex mb-4">
             <div className="w-11/12 grid grid-flow-col gap-2 overflow-x-auto scroll-smooth ">
               {getVisibleImages().map((prompt) => (
-                <div className="flex flex-col">
+                <div className="flex flex-col pt-2"  key={prompt.id}>
                    <div
-                  key={prompt.id}
-                  className={`bg-white shadow-lg rounded-xl cursor-pointer w-32 m-2 ${
+                 
+                  className={`bg-white shadow-lg rounded-xl cursor-pointer  transition-transform duration-300   w-32 m-2 ${
                     selectedImageId === prompt.id
-                      ? "scale-100  shadow-[0_0_15px_4px_rgba(59,130,246,1)]"
+                      ? "scale-105 border-4 border-blue-400 bg-blue-400 shadow-[0_0_10px_4px_rgba(59,130,246,0.5)]"
                       : "border-4  border-white"
                   }`}
                   onClick={() => handleImageSelect(prompt.id)}
                 >
+
                   <Image
                     src={prompt.src}
                     alt={prompt.alt}
@@ -413,7 +414,7 @@ export default function HomePage() {
                     className="w-32 h-auto object-cover rounded-md"
                   />
                 </div>
-                 <div className="flex text-gray-500 font-normal text-sm  pb-2 justify-center">
+                 <div className="flex text-gray-500 font-raleway font-normal text-sm  pb-2 justify-center">
                  {prompt.name}
                </div>
                 </div>
@@ -480,8 +481,8 @@ export default function HomePage() {
                     <span
                       className={`flex max-w-24 text-xs xl:text-sm justify-center items-center pt-1 pb-2 px-2 md:px-0 ${
                         isSelected
-                          ? "text-blue-600 font-semibold "
-                          : "text-white"
+                          ? "text-blue-600 font-raleway font-bold "
+                          : "text-white font-raleway font-normal"
                       }`}
                     >
                       {category.name}
@@ -499,7 +500,7 @@ export default function HomePage() {
             {/* Main Content Area */}
             <div className="max-sm:hidden block  sm:w-3/4 md:4/5 p-2  bg-white">
               <div className="flex flex-col h-4/5 ">
-                <h1 className="text-xl lg:text-2xl font-light text-gray-400 m-2 ">
+                <h1 className="text-xl lg:text-2xl font-raleway font-normal  text-gray-400 m-2 ">
                   Recommended Images
                 </h1>
                 <div
@@ -512,14 +513,16 @@ export default function HomePage() {
                 >
                   {getVisibleImages().map((prompt) => (
                     <div key={prompt.id} className="flex flex-col">
-                      <div
-                        className={`bg-white shadow-lg rounded-xl cursor-pointer  ${
-                          selectedImageId === prompt.id
-                            ? "scale-100 border-4 border-blue-400  shadow-[0_0_15px_4px_rgba(59,130,246,1)]"
-                            : "border-4 border-white"
-                        }`}
-                        onClick={() => handleImageSelect(prompt.id)}
-                      >
+<div
+  className={`bg-white shadow-lg rounded-xl cursor-pointer transition-transform duration-300 ${
+    selectedImageId === prompt.id
+      ? "scale-105 border-4 border-blue-400 bg-blue-400 shadow-[0_0_10px_4px_rgba(59,130,246,0.5)]"
+      : "border-4 border-white"
+  }`}
+  onClick={() => handleImageSelect(prompt.id)}
+>
+ 
+
                         <Image
                           src={prompt.src}
                           alt={prompt.alt}
@@ -528,7 +531,7 @@ export default function HomePage() {
                           className="w-full h-auto object-cover rounded-md"
                         />
                       </div>
-                      <div className="flex text-gray-500 font-normal text-lg justify-center">
+                      <div className="flex text-gray-500 font-raleway font-normal text-sm justify-center">
                         {prompt.name}
                       </div>
                     </div>

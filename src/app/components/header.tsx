@@ -32,16 +32,16 @@ export default function Header() {
 
       {/* Center: Navigation Links */}
       <div className="hidden md:flex  text-white text-sm font-medium justify-center gap-4 lg:gap-8 items-center w-2/4">
-        <a href="#" className="hover:text-gray-300 transition duration-200">
+        <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
           Blog
         </a>
-        <a href="#" className="hover:text-gray-300 transition duration-200">
+        <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
           Our Products
         </a>
-        <a href="#" className="hover:text-gray-300 transition duration-200">
+        <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
           App Download
         </a>
-        <a href="#" className="hover:text-gray-300 transition duration-200">
+        <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
           Pricing
         </a>
       </div>
@@ -79,12 +79,12 @@ export default function Header() {
                     <div className="bg-white p-4 rounded shadow-lg text-sky-600">
                       {session.user && (
                         <>
-                          <span className="block font-medium mb-2">
+                          <span className="block font-raleway font-medium mb-2">
                             {session.user.name} {/* User's name */}
                           </span>
                           <button
                             onClick={() => signOut()}
-                            className="px-4 py-2 bg-red-500 text-white w-full rounded-full hover:bg-red-600"
+                            className="px-4 py-2 bg-red-500 text-white w-full font-raleway font-bold rounded-full hover:bg-red-600"
                           >
                             Logout
                           </button>
@@ -112,13 +112,13 @@ export default function Header() {
                 <div>
                   <button
                     onClick={() => signIn("google")}
-                    className="flex  text-white items-center text-sm sm:text-md  text-nowrap justify-center"
+                    className="flex  text-white items-center text-sm sm:text-md  font-raleway font-bold text-nowrap justify-center"
                   >
                     Sign In
                   </button>
                 </div>
                 <div>
-                  <button className="flex p-2 rounded-full bg-gradient-to-r text-sm sm:text-md text-nowrap from-blue-400 to-blue-600 text-white text-md font-medium  items-center justify-center">
+                  <button className="flex p-2 rounded-full bg-gradient-to-r text-sm sm:text-md text-nowrap font-raleway font-bold from-blue-400 to-blue-600 text-white text-md items-center justify-center">
                     Launch App
                   </button>
                 </div>
