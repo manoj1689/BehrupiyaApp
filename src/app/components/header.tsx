@@ -95,6 +95,7 @@ export default function Header() {
                 )}
                 onClickOutside={() => setIsPopoverOpen(false)}
               >
+              
                 <div
                   onClick={togglePopover}
                   className="cursor-pointer bg-white rounded-full p-2"

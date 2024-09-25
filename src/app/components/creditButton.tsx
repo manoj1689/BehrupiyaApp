@@ -123,11 +123,14 @@ const CreditButton: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center ">
-      <div className=" flex gap-2 p-2 rounded-full  text-sm text-white bg-sky-600">
+      {credits !== null && credits !==0 ? <>
+        <div className=" flex gap-2 p-2 rounded-full  text-sm text-white bg-sky-600">
       <span><IoMdAddCircleOutline size={20} color="white"/></span>
-      <span>  {credits !== null && credits !==0 ? `Credits: ${credits}` : ""}</span>
+      <span>Credits:{credits} </span>
       
       </div>
+      </>  : ""}
+     
 
       {/* If credits are 0, show "Add Credit" button */}
       {credits === 0 && (

@@ -14,6 +14,7 @@ import { useSession, signIn } from "next-auth/react";
 import { handleDeductCredit } from "../components/creditButton";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CgPushChevronRight } from "react-icons/cg";
 import { div } from "framer-motion/client";
 interface Prompt {
   id: string;
@@ -159,7 +160,16 @@ export default function HomePage() {
   const handleLoadMore = () => {
     setCurrentPage((prevPage) => prevPage + 1);
   };
-
+  useEffect(() => {
+    if (selectedCategory) {
+      const category = categories.find((cat) => cat.name === selectedCategory);
+      if (category && category.prompts.length > 0) {
+        const firstImage = category.prompts[0];
+        setSelectedImageId(firstImage.id);
+        setPositivePrompt(firstImage.alt); // Set the prompt for the first image
+      }
+    }
+  }, [selectedCategory, categories]);
   const getVisibleImages = () => {
     if (!selectedCategory) return [];
     const category = categories.find((cat) => cat.name === selectedCategory);
@@ -400,7 +410,7 @@ export default function HomePage() {
                  
                   className={`bg-white shadow-lg rounded-xl cursor-pointer  transition-transform duration-300   w-32 m-2 ${
                     selectedImageId === prompt.id
-                      ? "scale-105 border-4 border-blue-400 bg-blue-400 shadow-[0_0_10px_4px_rgba(59,130,246,0.5)]"
+                      ?  "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
                       : "border-4  border-white"
                   }`}
                   onClick={() => handleImageSelect(prompt.id)}
@@ -422,14 +432,17 @@ export default function HomePage() {
               ))}
             </div>
             <div
-              className={` shadow-lg flex w-1/12 justify-end items-center  ${
+              className={` shadow-lg flex w-1/12 justify-center items-center  ${
                 hasMoreImages()
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-400 text-white"
+                  ?  " text-blue-600"
+                  : " text-gray-500"
               }`}
               onClick={handleLoadMore}
-            >
-              <MdKeyboardArrowRight size={40} />
+            >{
+              hasMoreImages()? <MdKeyboardArrowRight size={50} />: <CgPushChevronRight size={50}/>
+            }
+            
+             
             </div>
           </div>
         </div>
@@ -479,7 +492,7 @@ export default function HomePage() {
                       className="pt-2 w-8"
                     />
                     <span
-                      className={`flex max-w-24 text-xs xl:text-sm justify-center items-center pt-1 pb-2 px-2 md:px-0 ${
+                      className={`flex max-w-24 text-sm xl:text-md  justify-center items-center pt-1 pb-2 px-2 md:px-0 ${
                         isSelected
                           ? "text-blue-600 font-raleway font-bold "
                           : "text-white font-raleway font-normal"
@@ -504,7 +517,7 @@ export default function HomePage() {
                   Recommended Images
                 </h1>
                 <div
-                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 px-2"
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 p-2"
                   style={{
                     maxHeight: "550px",
                     overflowY: "auto",
@@ -514,9 +527,9 @@ export default function HomePage() {
                   {getVisibleImages().map((prompt) => (
                     <div key={prompt.id} className="flex flex-col">
 <div
-  className={`bg-white shadow-lg rounded-xl cursor-pointer transition-transform duration-300 ${
+  className={`bg-white shadow-lg  rounded-xl cursor-pointer transition-transform duration-300 ${
     selectedImageId === prompt.id
-      ? "scale-105 border-4 border-blue-400 bg-blue-400 shadow-[0_0_10px_4px_rgba(59,130,246,0.5)]"
+      ? "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
       : "border-4 border-white"
   }`}
   onClick={() => handleImageSelect(prompt.id)}
@@ -531,7 +544,7 @@ export default function HomePage() {
                           className="w-full h-auto object-cover rounded-md"
                         />
                       </div>
-                      <div className="flex text-gray-500 font-raleway font-normal text-sm justify-center">
+                      <div className="flex text-gray-500 font-raleway font-normal text-sm pt-2 justify-center">
                         {prompt.name}
                       </div>
                     </div>
@@ -550,23 +563,26 @@ export default function HomePage() {
                     onClick={handleLoadMore}
                   >
                     <span className="flex items-center ">
-                      <span className="flex w-full text-xs md:text-md">
+                      <span className="flex w-full text-md font-raleway font-normal">
                         Load more
                       </span>
                       <span>
                         <MdKeyboardArrowRight size={20} />
                       </span>
-                      <span>
+                      {hasMoreImages()? <span>
                         <MdKeyboardArrowRight size={20} />
-                      </span>
+                      </span>:<span>
+                        <CgPushChevronRight size={20} />
+                      </span>}
+                      
                     </span>
                   </button>
                 </div>
                 <div className="my-4 flex flex-col lg:flex-row justify-center items-center lg:gap-2">
-                  <div className="text-blue-600 font-sans">
+                  <div className="text-blue-600 font-raleway font-normal  ">
                     sponsored results by{" "}
                   </div>
-                  <div className="font-bold uppercase text-blue-600 font-sans">
+                  <div className="uppercase text-blue-600 font-raleway font-bold">
                     ERAM LABS
                   </div>
                 </div>
@@ -589,11 +605,11 @@ export default function HomePage() {
                     onDragOver={handleDragOver}
                   >
                     <img
-                      src="/icons.png"
+                      src="/images/New/default_img.png"
                       alt="Upload Icon"
-                      className=" w-30 h-30 text-gray-600"
+                      className=" w-35 h-35 text-gray-600"
                     />
-                    <span className="text-gray-500   text-xl">
+                    <span className="text-gray-400  font-raleway font-medium text-xl">
                       No Photo edit yet
                     </span>
                     <input
@@ -657,16 +673,16 @@ export default function HomePage() {
                       <div className="flex relative w-full ">
                         <button
                           onClick={() => setIsModalOpen(!isModalOpen)}
-                          className="flex items-center text-white  py-2 w-full justify-center rounded-full border bg-[#464950] border-white"
+                          className="flex items-center text-white  py-2 w-full justify-center rounded-full border bg-[#464950] hover:bg-[#32353a] border-white"
                         >
                           <div>
                             <IoCameraSharp size={30} />
                           </div>
                           <div className="flex flex-col ">
-                            <span className="px-4 text-md font-light">
+                            <span className="px-4 text-md font-raleway font-normal">
                               Models
                             </span>
-                            <span className="text-blue-400 text-xs">
+                            <span className="text-blue-400 text-xs font-raleway font-normal">
                               {models.find(
                                 (model) =>
                                   model.toLowerCase() ===
@@ -676,7 +692,7 @@ export default function HomePage() {
                           </div>
                         </button>
                         {isModalOpen && (
-                          <div className="absolute mt-2 bg-gray-800 text-white py-2 w-48 rounded-lg z-10">
+                          <div className="absolute mt-2 bg-slate-800 text-white py-2 w-48 rounded-lg z-10">
                             {models.map((model) => (
                               <button
                                 key={model}
@@ -684,9 +700,9 @@ export default function HomePage() {
                                   setSelectedModel(model.toLowerCase());
                                   setIsModalOpen(false);
                                 }}
-                                className={`block w-full text-left px-4 py-2 hover:bg-gray-600 ${
+                                className={`block w-full text-left font-raleway font-normal px-4 py-2 hover:bg-slate-500 hover:text-black ${
                                   selectedModel === model.toLowerCase()
-                                    ? "bg-gray-600"
+                                    ? "bg-gray-600 "
                                     : ""
                                 }`}
                               >
@@ -701,12 +717,12 @@ export default function HomePage() {
                       <div className="flex relative w-full ">
                         <button
                           onClick={() => setIsModalOpen1(true)}
-                          className="flex items-center rounded-full w-full justify-center border bg-[#464950] border-white text-white  py-4"
+                          className="flex items-center rounded-full w-full justify-center border bg-[#464950] hover:bg-[#32353a] border-white text-white  py-4"
                         >
                           <div className="px-1 text-white rounded-0 text-sm ml-1 border-2 border-white">
                             {selectedAspectRatioLabel}
                           </div>
-                          <span className="ml-2 text-sm">Aspect Ratio</span>
+                          <span className="ml-2 text-sm font-raleway font-normal">Aspect Ratio</span>
                         </button>
                       </div>
                     </div>
@@ -714,7 +730,7 @@ export default function HomePage() {
                     {/* Change Image Button in the Next Row */}
                     <div className="flex justify-center items-center">
                       <button
-                        className="w-full m-4 bg-blue-600 text-white text-sm flex items-center justify-center py-2 gap-5 rounded-3xl"
+                        className="w-full m-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-raleway font-normal flex items-center justify-center py-2 gap-5 rounded-3xl"
                         onClick={() => {
                           // Trigger file input click to upload/change images
                           const fileInput =
@@ -748,7 +764,7 @@ export default function HomePage() {
                   {isModalOpen1 && (
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
                       <div className="bg-white rounded-lg p-6 max-w-lg">
-                        <h3 className="text-lg text-black font-bold mb-4">
+                        <h3 className="text-lg text-black font-raleway font-bold mb-4">
                           Aspect Ratio
                         </h3>
                         <div className="grid grid-cols-3 text-black gap-4">
@@ -759,20 +775,20 @@ export default function HomePage() {
                                 setSelectedImageSize(ratio.value);
                                 setIsModalOpen1(false);
                               }}
-                              className={`border rounded-lg px-4 py-2 flex flex-col items-center justify-center ${
+                              className={`border rounded-lg px-4 py-2 flex  flex-col items-center justify-center ${
                                 selectedImageSize === ratio.value
-                                  ? "border-blue-500"
-                                  : "border-gray-300"
+                                  ? "border-blue-500 text-blue-500 "
+                                  : "border-gray-500 text-gray-500 "
                               }`}
                             >
                               <span className="text-xl">{ratio.icon}</span>
-                              <span className="mt-2">{ratio.label}</span>
+                              <span className="m-2">{ratio.label}</span>
                             </button>
                           ))}
                         </div>
                         <button
                           onClick={() => setIsModalOpen1(false)}
-                          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                          className="mt-4 w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-full font-raleway font-normal text-white "
                         >
                           Close
                         </button>
@@ -802,7 +818,7 @@ export default function HomePage() {
                   ) : (
                     <div className="text-gray-500 py-8 flex flex-col  items-center justify-center text-xl">
                       <img src="/icon.png" alt="Upload Icon" />
-                      <div className="mt-8">No image generated</div>
+                      <div className="mt-8 font-raleway font-normal text-gray-400">No Image</div>
                     </div>
                   )}
                 </div>
@@ -812,7 +828,7 @@ export default function HomePage() {
                     <div className="flex flex-col gap-5 justify-center items-center ">
                       <button
                         onClick={handleGenerateNewImage}
-                        className="flex w-full xl:w-2/3   bg-blue-600 justify-center text-white py-4 rounded-full hover:bg-sky-700 "
+                        className="flex w-full xl:w-2/3   bg-blue-600 justify-center font-raleway font-normal text-white py-4 rounded-full hover:bg-sky-700 "
                       >
                         Re-Genreate
                       </button>
@@ -821,7 +837,7 @@ export default function HomePage() {
                         onClick={handleDownload}
                         className="flex w-full justify-center items-center text-white"
                       >
-                        <span className="inline-block border-b-2 border-white">
+                        <span className="inline-block border-b-2 font-raleway font-normal border-white">
                           Download Image
                         </span>
                       </div>
@@ -839,8 +855,8 @@ export default function HomePage() {
                         }}
                         className={`text-white p-4 w-full xl:w-2/3 rounded-full transition-colors ${
                           isGenerating
-                            ? "bg-blue-600 cursor-not-allowed"
-                            : "bg-blue-600 hover:bg-blue-700"
+                            ? "bg-blue-600 cursor-not-allowed font-raleway font-normal"
+                            : "bg-blue-600 hover:bg-blue-700 font-raleway font-normal"
                         }`}
                         disabled={isGenerating}
                       >
@@ -868,11 +884,11 @@ export default function HomePage() {
                     onDragOver={handleDragOver}
                   >
                     <img
-                      src="/icons.png"
+                      src="/images/New/default_img.png"
                       alt="Upload Icon"
                       className="mb-2 w-24 h-24 "
                     />
-                    <span className="text-gray-500  text-xl">
+                    <span className="text-gray-400 font-raleway font-normal text-xl mt-4">
                       No Photo edit yet
                     </span>
                     <input
@@ -951,17 +967,17 @@ export default function HomePage() {
                     <div className="flex  relative w-full ">
                       <button
                         onClick={() => setIsModalOpen(!isModalOpen)}
-                        className="flex items-center text-white  py-1 text-sm w-full justify-center rounded-full border bg-[#464950] border-white"
+                        className="flex items-center text-white  py-1 text-sm w-full justify-center rounded-full border bg-[#464950] hover:bg-[#2d2f33]  border-white"
                       >
                         <div className="mx-1 sm:mx-2">
                           <IoCameraSharp size={20} />
                         </div>
 
                         <div className="flex flex-col ">
-                          <span className=" text-xs sm:text-sm md:text-md font-light">
+                          <span className=" text-xs sm:text-sm md:text-md font-raleway font-normal">
                             Models
                           </span>
-                          <span className="text-blue-400 text-[10px] sm:text-xs">
+                          <span className="text-blue-400 text-[10px] font-raleway font-normal sm:text-xs">
                             {models.find(
                               (model) =>
                                 model.toLowerCase() ===
@@ -971,7 +987,7 @@ export default function HomePage() {
                         </div>
                       </button>
                       {isModalOpen && (
-                        <div className="absolute mt-2 bg-gray-800 text-white py-2 w-48 rounded-lg z-10">
+                        <div className="absolute mt-2 bg-gray-800 text-white font-raleway font-normal  py-2 w-48 rounded-lg z-10">
                           {models.map((model) => (
                             <button
                               key={model}
@@ -979,9 +995,9 @@ export default function HomePage() {
                                 setSelectedModel(model.toLowerCase());
                                 setIsModalOpen(false);
                               }}
-                              className={`block w-full text-left px-4 py-2  hover:bg-gray-600 ${
+                              className={`block w-full text-left px-4 py-2  hover:bg-slate-800 hover:text-gray-800 ${
                                 selectedModel === model.toLowerCase()
-                                  ? "bg-gray-600"
+                                  ? "bg-gray-600  "
                                   : ""
                               }`}
                             >
@@ -993,7 +1009,7 @@ export default function HomePage() {
                     </div>
                     <div className="hidden lg:block w-full justify-center items-center">
                       <button
-                        className="w-full  bg-blue-600  text-white text-xs sm:text-sm md:text-md flex items-center justify-center py-2  rounded-full"
+                        className="w-full  bg-blue-500 hover:bg-blue-600 font-raleway font-normal text-white text-xs sm:text-sm md:text-md flex items-center justify-center py-2  rounded-full"
                         onClick={() => {
                           if (uploadedImages.length > 0) {
                             // If images exist, trigger the change image functionality
@@ -1031,15 +1047,15 @@ export default function HomePage() {
                     <div className="flex relative w-full ">
                       <button
                         onClick={() => setIsModalOpen1(true)}
-                        className="flex items-center rounded-full w-full justify-center border bg-[#464950] border-white text-white  sm:py-3"
+                        className="flex items-center rounded-full w-full justify-center border bg-[#464950] hover:bg-[#2d2f33] border-white text-white  sm:py-3"
                       >
                         <div className="px-1 text-white rounded-0 text-xs sm:text-sm md:text-md ml-1 border-2 border-white">
                           {selectedAspectRatioLabel}
                         </div>
-                        <span className="hidden sm:block ml-2 text-xs sm:text-sm md:text-md">
+                        <span className="hidden sm:block font-raleway font-normal ml-2 text-xs sm:text-sm md:text-md">
                           Aspect Ratio
                         </span>
-                        <div className="block sm:hidden flex-col ml-2 text-xs sm:text-sm md:text-md py-1">
+                        <div className="block sm:hidden font-raleway font-normal flex-col ml-2 text-xs sm:text-sm md:text-md py-1">
                           <div>Aspect</div>
                           <div>Ratio</div>
                         </div>
@@ -1050,7 +1066,7 @@ export default function HomePage() {
                   {/* Change Image Button in the Next Row */}
                   <div className="block lg:hidden w-full mx-auto mt-2 justify-center items-center">
                     <button
-                      className="w-full  bg-blue-600 text-white  text-sm flex items-center justify-center py-2  rounded-3xl"
+                      className="w-full  bg-blue-600 text-white font-raleway font-normal text-sm flex items-center justify-center py-2  rounded-3xl"
                       onClick={() => {
                         if (uploadedImages.length > 0) {
                           // If images exist, trigger the change image functionality
@@ -1090,7 +1106,7 @@ export default function HomePage() {
                 {isModalOpen1 && (
                   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
                     <div className="bg-white rounded-lg p-6 max-w-lg">
-                      <h3 className="text-lg text-black font-bold mb-4">
+                      <h3 className="text-lg text-black font-raleway  font-bold mb-4">
                         Aspect Ratio
                       </h3>
                       <div className="grid grid-cols-3 text-black gap-4">
@@ -1103,8 +1119,8 @@ export default function HomePage() {
                             }}
                             className={`border rounded-lg px-4 py-2 flex flex-col items-center justify-center ${
                               selectedImageSize === ratio.value
-                                ? "border-blue-500"
-                                : "border-gray-300"
+                                ? "border-blue-500 text-blue-500"
+                                : "border-gray-400 text-gray-600"
                             }`}
                           >
                             <span className="text-xl">{ratio.icon}</span>
@@ -1114,7 +1130,7 @@ export default function HomePage() {
                       </div>
                       <button
                         onClick={() => setIsModalOpen1(false)}
-                        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                        className="mt-4 px-4 py-2 bg-blue-500 font-raleway font-normal w-full rounded-full text-white "
                       >
                         Close
                       </button>
@@ -1138,9 +1154,9 @@ export default function HomePage() {
                     className=" w-48  rounded-xl object-contain"
                   />
                 ) : (
-                  <div className="text-gray-500  flex flex-col items-center justify-center text-xl sm:text-2xl">
+                  <div className="text-gray-400  flex flex-col font-raleway font-normal items-center justify-center text-xl sm:text-2xl">
                     <img src="/icon.png" alt="Upload Icon" className="w-40" />
-                    <div>No image generated</div>
+                    <div className="font-raleway font-normal mt-4">No Image </div>
                   </div>
                 )}
               </div>
@@ -1150,7 +1166,7 @@ export default function HomePage() {
                 <div className="flex flex-col  justify-center h-1/4 items-center">
                   <button
                     onClick={handleGenerateNewImage}
-                    className="flex w-full sm:w-1/2 bg-blue-600 justify-center text-white py-2 rounded-full hover:bg-sky-700 "
+                    className="flex w-full sm:w-1/2 bg-blue-600 justify-center font-raleway font-normal text-white py-2 rounded-full hover:bg-sky-700 "
                   >
                     Re-Genreate
                   </button>
@@ -1159,7 +1175,7 @@ export default function HomePage() {
                     onClick={handleDownload}
                     className="flex w-full justify-center items-center text-white"
                   >
-                    <span className="inline-block border-b-2 border-white text-sm my-2">
+                    <span className="inline-block border-b-2 font-raleway font-normal border-white text-sm my-2">
                       Download Image
                     </span>
                   </div>
@@ -1179,7 +1195,7 @@ export default function HomePage() {
 
                       handleGenerateImage(); // Check session before generating
                     }}
-                    className={`text-white p-2 w-full md:w-2/3 rounded-full transition-colors ${
+                    className={`text-white p-3 w-full md:w-2/3 font-raleway font-normal rounded-full transition-colors ${
                       isGenerating
                         ? "bg-blue-600 cursor-not-allowed"
                         : "bg-blue-600 hover:bg-blue-700"

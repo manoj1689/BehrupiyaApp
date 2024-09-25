@@ -14,11 +14,11 @@ export default function Follower() {
         >
           <div className="container mx-auto flex flex-col md:flex-row justify-between items-center px-4 ">
             <div className="flex flex-col lg:w-1/2 bg-orange-500m md:mx-8 text-center min-h-96 justify-center items-center lg:text-left md:text-left">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <h1 className="text-4xl md:text-5xl font-bold font-raleway  mb-4">
                 Follow Us on Discord
               </h1>
-              <div className="text-sm md:text-lg  mb-8 text-center lg:w-2/3">
-                Connect and share innovative ideas with over 63K+ creative
+              <div className="text-sm md:text-lg font-raleway font-semibold  mb-8 text-center lg:w-2/3">
+                Connect and share innovative ideas with over <span className="text-yellow-500">63K+ </span>creative
                 like-minded people.
               </div>
               <div className="flex justify-center md:justify-start space-x-4">

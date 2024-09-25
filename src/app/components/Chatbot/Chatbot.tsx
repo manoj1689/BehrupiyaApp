@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useChat } from "ai/react";
 import ChatBubble from "./ChatBubble";
-import MessageIcon from "@mui/icons-material/Message";
-import CloseIcon from "@mui/icons-material/Close";
+import { IoMdChatbubbles } from "react-icons/io";
+import { IoMdClose } from "react-icons/io";
 import MicIcon from "@mui/icons-material/Mic";
 import SendIcon from "@mui/icons-material/Send";
 import { Message } from "../../types/message";
@@ -102,10 +102,10 @@ const Chatbot = () => {
     <div>
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 right-10 bg-gray-800 text-white p-4 z-50 rounded-full shadow-lg transition-transform duration-300 transform hover:scale-115 flex items-center justify-center"
+        className="fixed bottom-6 right-10 bg-gray-300 text-white p-4 z-50 rounded-full shadow-lg transition-transform duration-300 transform hover:scale-115 flex items-center justify-center"
         aria-label={isChatOpen ? "Close chat" : "Open chat"}
       >
-        {isChatOpen ? <CloseIcon /> : <MessageIcon />}
+        {isChatOpen ? <IoMdClose size={30} color="black" /> : <IoMdChatbubbles size={30} color="black" />}
       </button>
 
       {isChatOpen && (
