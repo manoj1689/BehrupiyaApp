@@ -73,7 +73,7 @@ const pricingData: PricingData = {
 const PricingCard: React.FC<{ plan: PricingPlan }> = ({ plan }) => {
   return (
     <motion.div
-      className="bg-gray-800 w-full lg:w-1/3  lg:mx-8 xl:mx-12 text-white hover:border border-blue-600 rounded-lg px-6 text-left shadow-lg py-12"
+      className="bg-gray-800 w-full   lg:mx-4 text-white hover:border border-blue-600 rounded-lg px-6 text-left shadow-lg pt-12 pb-16"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.05 }}
@@ -177,7 +177,7 @@ const PricingPage: React.FC = () => {
         <div className="">{pricingData.title}</div>
       </motion.h1>
 
-      <div className="container mx-auto max-lg:px-4 flex flex-col lg:flex-row  max-lg:gap-5  justify-center my-8  lg:my-12  ">
+      <div className="container mx-auto xl:w-4/6 max-lg:px-4 flex flex-col lg:flex-row  max-lg:gap-5  justify-center my-8  lg:my-12  ">
         {pricingData.plans.map((plan, index) => (
           <PricingCard key={index} plan={plan} />
         ))}
