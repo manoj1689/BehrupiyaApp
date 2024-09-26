@@ -1,15 +1,12 @@
 "use client";
-
-import { CreditButton } from "./creditButton";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { FaUser } from "react-icons/fa";
 import React, { useState } from "react";
 import Image from "next/image";
 import { Popover, ArrowContainer } from "react-tiny-popover";
 import BehrupiyaLogo from "../../../public/images/New/BehrupiyaLogo.png";
-import googleLogo from "../../../public/images/New/SignIn.png";
-import { div } from "framer-motion/client";
-
+import CreditButton from "./creditButton";
+import Link from "next/link";
 export default function Header() {
   const { data: session } = useSession();
   console.log(session);
@@ -23,18 +20,23 @@ export default function Header() {
     <header className="w-full  py-4  flex justify-between items-center shadow-md border-b border-white bg-gradient-to-b from-gray-900 to-black">
       {/* Left: Logo */}
       <div className="flex w-1/2  sm:w-1/3 px-4  md:w-1/4 justify-center items-center">
-        <Image
+      <Link href="/" passHref>
+      <Image
           src={BehrupiyaLogo}
           alt="User Profile"
           className="bg-transparent"
         />
+  </Link>
+       
       </div>
 
       {/* Center: Navigation Links */}
       <div className="hidden md:flex  text-white text-sm font-medium justify-center gap-4 lg:gap-8 items-center w-2/4">
-        <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
-          Blog
-        </a>
+        <Link href="/blog" passHref>
+    <span className="hover:text-gray-300 font-raleway font-bold transition duration-200 cursor-pointer">
+      Blog
+    </span>
+  </Link>
         <a href="#" className="hover:text-gray-300 font-raleway font-bold transition duration-200">
           Our Products
         </a>

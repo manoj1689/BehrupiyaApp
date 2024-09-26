@@ -5,13 +5,15 @@ import { MdFileUpload } from "react-icons/md";
 import { RiCloseCircleFill } from "react-icons/ri";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useEffect, useState, useRef } from "react";
-
+import React, { useContext } from 'react';
+import { MyContext } from '../context/CreditContex'; 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { IoCameraSharp } from "react-icons/io5";
 import { useSession, signIn } from "next-auth/react";
-import { handleDeductCredit } from "../components/creditButton";
+import handleDeductCredit  from "../components/creditButton";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CgPushChevronRight } from "react-icons/cg";
@@ -20,7 +22,7 @@ interface Prompt {
   id: string;
   src: string;
   alt: string;
-  name:string;
+  name: string;
 }
 
 interface Category {
@@ -29,33 +31,12 @@ interface Category {
 }
 
 export default function HomePage() {
-  //   useEffect(() => {
-  //     // Disable right-click (context menu)
-  //     const handleContextMenu = (e: { preventDefault: () => any }) =>
-  //       e.preventDefault();
-
-  //     // Disable copy (cut/copy/paste)
-  //     const handleCopyCut = (e: { preventDefault: () => any }) =>
-  //       e.preventDefault();
-
-  //     // Add event listeners
-  //     document.addEventListener("contextmenu", handleContextMenu);
-  //     document.addEventListener("copy", handleCopyCut);
-  //     document.addEventListener("cut", handleCopyCut);
-  //     document.addEventListener("paste", handleCopyCut);
-
-  //     return () => {
-  //       // Clean up event listeners
-  //       document.removeEventListener("contextmenu", handleContextMenu);
-  //       document.removeEventListener("copy", handleCopyCut);
-  //       document.removeEventListener("cut", handleCopyCut);
-  //       document.removeEventListener("paste", handleCopyCut);
-  //     };
-  //   }, []);
   const { data: session } = useSession();
+  const { state, setState } = useContext(MyContext);
+
+  const [credits, setCredits] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [credits, setCredits] = useState<number | null>(null);
   const router = useRouter();
   const [uploadedImages, setUploadedImages] = useState<File[]>([]);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -121,7 +102,7 @@ export default function HomePage() {
                   ? imgData["Image URL"]
                   : `/${imgData["Image URL"]}`,
                 alt: imgData["Prompt"],
-                name:imgData["Name"]
+                name: imgData["Name"],
               });
             });
           }
@@ -135,7 +116,7 @@ export default function HomePage() {
       }));
 
       setCategories(categoryList);
-      
+
       setPromptMap(
         new Map(
           categoryList.flatMap((cat) => cat.prompts.map((p) => [p.id, p.alt]))
@@ -214,65 +195,101 @@ export default function HomePage() {
   const [imageWidth, imageHeight] = selectedImageSize
     .split("*")
     .map((s) => parseInt(s.replace("px", ""), 10));
-
-  const handleGenerate = async () => {
-    // if (uploadedImages.length === 0 || !positivePrompt) {
-    //   alert("Please upload an image and enter positive/negative prompts.");
-    //   return;
-    // }
-
-    const modifiedPrompt = positivePrompt
-      ?.replace(/{cinematic_style}/gi, selectedModel)
-      .replace(/{image_size}/gi, selectedImageSize)
-      .replace(/{dress_style}/gi, selectedDressStyle);
-
-    console.log("Modified Prompt:", modifiedPrompt);
-    console.log("Style:", selectedModel);
-    console.log("Parsed Width:", imageWidth);
-    console.log("Parsed Height:", imageHeight);
-
-    const formData = new FormData();
-    uploadedImages.forEach((file) => formData.append("files", file));
-    formData.append("prompt", modifiedPrompt || "");
-    formData.append("style", selectedModel || "");
-    formData.append("width", imageWidth.toString());
-    formData.append("height", imageHeight.toString());
-    formData.append("steps", "50");
-    formData.append(
-      "negative_prompt",
-      "Multiple faces, nudity, cartoonish, deformed, ugly, blurry, noisy, low-quality, text, watermark, grainy, glitch, distorted, low-resolution, off-center, mutated, disfigured, missing limbs, extra limbs, unnatural lighting, overly stylized, excessive shadows, incorrect anatomy, inappropriate expressions" ||
-        ""
-    );
-
-    setIsGenerating(true);
-
-    try {
-      const response = await fetch("api/generate-image", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Accept: "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to generate image");
+   
+   
+    const handleDeductCredit = async (email: string) => {
+      setLoading(true);
+      setMessage(null);
+      console.log("handle deduct Credit");
+      try {
+        const response = await axios.post("/api/update-credits", {
+          email,
+          credits: -1, // Deduct 1 credit
+        });
+    
+        setCredits(response.data.credits);
+        setState(response.data.credits); // Update context state
+        setMessage(`Credits updated! Remaining credits: ${response.data.credits}`);
+      } catch (error) {
+        console.error("Error updating credits:", error);
+        setMessage("Failed to update credits.");
+      } finally {
+        setLoading(false);
       }
-
-      const result = await response.json();
-      setGeneratedImage(result.image_url);
-
-      const img = new window.Image();
-      img.src = result.image_url;
-      img.onload = () => {
-        setImageDimensions({ width: img.width, height: img.height });
-      };
-    } catch (error) {
-      console.error("Error generating image:", error);
-    } finally {
-      setIsGenerating(false);
-    }
-  };
+    };
+    
+    const handleGenerate = async () => {
+      // Check if there are uploaded images and a valid prompt
+      if (uploadedImages.length === 0 || !positivePrompt) {
+        alert("Please upload an image and enter positive/negative prompts.");
+        return;
+      }
+    
+      // Modify the positive prompt based on selected values
+      const modifiedPrompt = positivePrompt
+        ?.replace(/{cinematic_style}/gi, selectedModel)
+        .replace(/{image_size}/gi, selectedImageSize)
+        .replace(/{dress_style}/gi, selectedDressStyle);
+    
+      console.log("Modified Prompt:", modifiedPrompt);
+      console.log("Style:", selectedModel);
+      console.log("Parsed Width:", imageWidth);
+      console.log("Parsed Height:", imageHeight);
+    
+      // Prepare the form data
+      const formData = new FormData();
+      uploadedImages.forEach((file) => formData.append("files", file));
+      formData.append("prompt", modifiedPrompt || "");
+      formData.append("style", selectedModel || "");
+      formData.append("width", imageWidth.toString());
+      formData.append("height", imageHeight.toString());
+      formData.append("steps", "50");
+      formData.append(
+        "negative_prompt",
+        "Multiple faces, nudity, cartoonish, deformed, ugly, blurry, noisy, low-quality, text, watermark, grainy, glitch, distorted, low-resolution, off-center, mutated, disfigured, missing limbs, extra limbs, unnatural lighting, overly stylized, excessive shadows, incorrect anatomy, inappropriate expressions"
+      );
+    
+      setIsGenerating(true);
+      console.log("Credit values at feature page:", state);
+    
+      try {
+        // Make a POST request to the image generation API
+        const response = await fetch("/api/generate-image", {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        });
+    
+        if (!response.ok) {
+          throw new Error("Failed to generate image");
+        }
+    
+        // Process the response
+        const result = await response.json();
+        setGeneratedImage(result.image_url);
+    
+        // Load the image to get its dimensions
+        const img = new window.Image();
+        img.src = result.image_url;
+        img.onload = () => {
+          setImageDimensions({ width: img.width, height: img.height });
+        };
+    
+      // console.log("Image URL successful");
+    
+        // Deduct the user's credit
+        if (session?.user?.email) {
+          await handleDeductCredit(session.user.email);
+        }
+      } catch (error) {
+        console.error("Error generating image:", error);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+    
 
   const handleImageSelect = (id: string) => {
     const prompt = promptMap.get(id);
@@ -323,16 +340,7 @@ export default function HomePage() {
     }
   };
 
-  // const handleDownload = () => {
-  //   if (generatedImage) {
-  //     const link = document.createElement("a");
-  //     link.href = generatedImage;
-  //     link.download = "generated-image.png";
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //   }
-  // };
+
 
   const handleDownload = () => {
     if (generatedImage) {
@@ -358,14 +366,10 @@ export default function HomePage() {
     // Proceed with image generation if session exists
     handleGenerate();
 
-    // Deduct credit after generation
-    handleDeductCredit(
-      session?.user?.email!,
-      setCredits,
-      setMessage,
-      setLoading
-    );
   };
+
+ 
+  
   const isButtonDisabled = uploadedImages.length === 0 || !positivePrompt;
   const buttonClassName = isButtonDisabled
     ? "px-6 py-3 bg-red-600 text-white rounded-lg cursor-not-allowed"
@@ -385,6 +389,7 @@ export default function HomePage() {
           draggable
           pauseOnHover
         />
+    
         <div className="w-full p-2 text-white text-center">
           <h1 className="text-lg:sm:text-xl font-raleway font-bold uppercase">
             Unleash your inner Behrupiya
@@ -405,44 +410,40 @@ export default function HomePage() {
           <div className="flex mb-4">
             <div className="w-11/12 grid grid-flow-col gap-2 overflow-x-auto scroll-smooth ">
               {getVisibleImages().map((prompt) => (
-                <div className="flex flex-col pt-2"  key={prompt.id}>
-                   <div
-                 
-                  className={`bg-white shadow-lg rounded-xl cursor-pointer  transition-transform duration-300   w-32 m-2 ${
-                    selectedImageId === prompt.id
-                      ?  "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
-                      : "border-4  border-white"
-                  }`}
-                  onClick={() => handleImageSelect(prompt.id)}
-                >
-
-                  <Image
-                    src={prompt.src}
-                    alt={prompt.alt}
-                    width={100}
-                    height={100}
-                    className="w-32 h-auto object-cover rounded-md"
-                  />
+                <div className="flex flex-col pt-2" key={prompt.id}>
+                  <div
+                    className={`bg-white shadow-lg rounded-xl cursor-pointer  transition-transform duration-300   w-32 m-2 ${
+                      selectedImageId === prompt.id
+                        ? "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
+                        : "border-4  border-white"
+                    }`}
+                    onClick={() => handleImageSelect(prompt.id)}
+                  >
+                    <Image
+                      src={prompt.src}
+                      alt={prompt.alt}
+                      width={100}
+                      height={100}
+                      className="w-32 h-auto object-cover rounded-md"
+                    />
+                  </div>
+                  <div className="flex text-gray-500 font-raleway font-normal text-sm  pb-2 justify-center">
+                    {prompt.name}
+                  </div>
                 </div>
-                 <div className="flex text-gray-500 font-raleway font-normal text-sm  pb-2 justify-center">
-                 {prompt.name}
-               </div>
-                </div>
-             
               ))}
             </div>
             <div
               className={` shadow-lg flex w-1/12 justify-center items-center  ${
-                hasMoreImages()
-                  ?  " text-blue-600"
-                  : " text-gray-500"
+                hasMoreImages() ? " text-blue-600" : " text-gray-500"
               }`}
               onClick={handleLoadMore}
-            >{
-              hasMoreImages()? <MdKeyboardArrowRight size={50} />: <CgPushChevronRight size={50}/>
-            }
-            
-             
+            >
+              {hasMoreImages() ? (
+                <MdKeyboardArrowRight size={50} />
+              ) : (
+                <CgPushChevronRight size={50} />
+              )}
             </div>
           </div>
         </div>
@@ -526,16 +527,14 @@ export default function HomePage() {
                 >
                   {getVisibleImages().map((prompt) => (
                     <div key={prompt.id} className="flex flex-col">
-<div
-  className={`bg-white shadow-lg  rounded-xl cursor-pointer transition-transform duration-300 ${
-    selectedImageId === prompt.id
-      ? "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
-      : "border-4 border-white"
-  }`}
-  onClick={() => handleImageSelect(prompt.id)}
->
- 
-
+                      <div
+                        className={`bg-white shadow-lg  rounded-xl cursor-pointer transition-transform duration-300 ${
+                          selectedImageId === prompt.id
+                            ? "scale-105 border-4 border-blue-400 bg-blue-400  shadow-sky-600"
+                            : "border-4 border-white"
+                        }`}
+                        onClick={() => handleImageSelect(prompt.id)}
+                      >
                         <Image
                           src={prompt.src}
                           alt={prompt.alt}
@@ -569,12 +568,15 @@ export default function HomePage() {
                       <span>
                         <MdKeyboardArrowRight size={20} />
                       </span>
-                      {hasMoreImages()? <span>
-                        <MdKeyboardArrowRight size={20} />
-                      </span>:<span>
-                        <CgPushChevronRight size={20} />
-                      </span>}
-                      
+                      {hasMoreImages() ? (
+                        <span>
+                          <MdKeyboardArrowRight size={20} />
+                        </span>
+                      ) : (
+                        <span>
+                          <CgPushChevronRight size={20} />
+                        </span>
+                      )}
                     </span>
                   </button>
                 </div>
@@ -592,6 +594,7 @@ export default function HomePage() {
 
           {/* Right Side Panel for large desktop */}
           <div className="hidden xl:block m-8 justify-center border-4 border-dotted border-gray-500 bg-[#24272c] rounded-3xl  flex-row items-center w-2/3">
+
             <div className=" flex px-8 py-12 h-full ">
               <div className="flex flex-col rounded-3xl bg-[#2F4F4F] xl:w-1/2 2xl:w-2/5 ">
                 {/* Image Upload Section */}
@@ -722,7 +725,9 @@ export default function HomePage() {
                           <div className="px-1 text-white rounded-0 text-sm ml-1 border-2 border-white">
                             {selectedAspectRatioLabel}
                           </div>
-                          <span className="ml-2 text-sm font-raleway font-normal">Aspect Ratio</span>
+                          <span className="ml-2 text-sm font-raleway font-normal">
+                            Aspect Ratio
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -818,7 +823,9 @@ export default function HomePage() {
                   ) : (
                     <div className="text-gray-500 py-8 flex flex-col  items-center justify-center text-xl">
                       <img src="/icon.png" alt="Upload Icon" />
-                      <div className="mt-8 font-raleway font-normal text-gray-400">No Image</div>
+                      <div className="mt-8 font-raleway font-normal text-gray-400">
+                        No Image
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1156,7 +1163,9 @@ export default function HomePage() {
                 ) : (
                   <div className="text-gray-400  flex flex-col font-raleway font-normal items-center justify-center text-xl sm:text-2xl">
                     <img src="/icon.png" alt="Upload Icon" className="w-40" />
-                    <div className="font-raleway font-normal mt-4">No Image </div>
+                    <div className="font-raleway font-normal mt-4">
+                      No Image{" "}
+                    </div>
                   </div>
                 )}
               </div>
