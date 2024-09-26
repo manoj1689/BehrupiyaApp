@@ -181,7 +181,7 @@ export default function HomePage() {
     setSelectedCinematic("cinematic");
     setSelectedDressStyle("traditional");
     setSelectedModel("cinematic");
-    setSelectedImageSize("512px*512px");
+    setSelectedImageSize("1024px*1024px");
     setIsModalOpen(false);
     setIsModalOpen1(false);
   };
@@ -280,7 +280,7 @@ export default function HomePage() {
       // console.log("Image URL successful");
     
         // Deduct the user's credit
-        if (session?.user?.email) {
+        if (session?.user?.email ) {
           await handleDeductCredit(session.user.email);
         }
       } catch (error) {
@@ -362,9 +362,13 @@ export default function HomePage() {
       signIn("google"); // Redirects to Google sign-in
       return;
     }
-
-    // Proceed with image generation if session exists
-    handleGenerate();
+   if(state >0){
+      // Proceed with image generation if session exists
+    handleGenerate();    
+   }else{
+    toast.error("Not Enough Credits ,Add Credits");
+   }
+   
 
   };
 
