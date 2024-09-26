@@ -816,11 +816,11 @@ export default function HomePage() {
                     </div>
                   ) : generatedImage ? (
                     <>
-                      <div className="flex w-full  justify-center items-center">
+                      <div className="flex w-full  justify-center  items-center">
                         <img
                           src={generatedImage}
                           alt="Generated"
-                          className="rounded-lg w-96  object-contain"
+                          className="rounded-lg w-[60%]  object-contain"
                         />
                       </div>
                     </>

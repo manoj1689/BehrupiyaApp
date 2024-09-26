@@ -5,7 +5,7 @@
       {
         "Prompt ID": 20,
         "Name": "M.I.1",
-        "Prompt": "Generate a {cinematic_style} style {image_size} photo of a man img as a Sufi saint, in a dargah, {dress_style} attire, prayer cap, natural skin, hard shadows, colorful. . 35mm photograph, film, bokeh, professional, 4k, highly detailed",
+        "Prompt": "Generate a {cinematic_style} style {image_size} photo of a man img as a Sufi saint, in a dargah, {dress_style} attire, prayer cap, natural skin, hard shadows, colorful,. 35mm photograph, film, bokeh, professional, 4k, highly detailed",
         "Reference Image": "p1.png",
         "Output Image": "outputs/output_20.png",
         "Image URL": "images/7c1455b9-4bb9-4cd9-bf3d-f69f0315d946.png"

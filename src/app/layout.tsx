@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ClientWrapper from "./components/ClientWrapper"; // Import your ClientWrapper component
-
+import { MyProvider } from './context/CreditContex'; 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,7 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientWrapper>{children}</ClientWrapper>
+        <ClientWrapper>
+          <MyProvider>
+          {children}
+          </MyProvider>
+     </ClientWrapper>
       </body>
     </html>
   );

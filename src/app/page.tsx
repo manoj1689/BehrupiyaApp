@@ -8,11 +8,11 @@ import Pricing from "./components/pricing";
 import Adver from "./components/Adver";
 import Feature from "./components/Feature";
 import Chatbot from "./components/Chatbot/Chatbot";
-import { MyProvider } from './context/CreditContex'; // Adjust the import based on your file structure
+
 
 export default function HomePage() {
   return (
-    <MyProvider>
+    
       <div>
         <Header />
         <Feature />
@@ -22,7 +22,7 @@ export default function HomePage() {
         <Pricing />
         <Footer />
       </div>
-    </MyProvider>
+
   );
 }
 
