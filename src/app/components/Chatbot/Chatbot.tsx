@@ -112,7 +112,7 @@ const Chatbot = () => {
         <div className="fixed bottom-[90px] z-50 right-4 xs:right-32 lg:right-8 max-sm:w-80 max-sm:max-h-[calc(100vh-60px)] sm:max-h-[calc(100vh-80px)] lg:max-h-[calc(100vh-120px)] h-96 border border-gray-800 rounded-lg shadow-lg flex flex-col overflow-hidden">
           <div className="p-3 bg-blue-500 text-white">
             <h6>Welcome,</h6>
-            <h4 className="text-lg font-bold">Hi, I'm Your AI Partner</h4>
+            <h4 className="text-lg font-bold">Hi, I&apos;m Your AI Partner</h4>
           </div>
 
           {/* Chat message area */}
