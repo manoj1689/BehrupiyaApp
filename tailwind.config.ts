@@ -16,6 +16,16 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      keyframes: {
+        zoomInOut: {
+          '0%, 100%': { transform: 'scale(1)' }, // Start and end at scale 100%
+          '50%': { transform: 'scale(1.1)' },    // Scale to 110% at the midpoint
+        },
+      },
+      animation: {
+        'zoom-in-out': 'zoomInOut 1s infinite', // Infinite zoom in/out animation
+      },
+    
     },
   },
   plugins: [],

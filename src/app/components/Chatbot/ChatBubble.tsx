@@ -7,7 +7,7 @@ import LoadingDots from "./LoadingDots"; // Import the LoadingDots component
 type ChatBubbleProps = {
   key: string;
   content: string;
-  role: "User" | "SmartGrader";
+  role: "User" | "Behrupiya";
   isLoading?: boolean; // Add isLoading prop to manage loading state
 };
 
@@ -19,12 +19,13 @@ export default function ChatBubble({
 }: ChatBubbleProps) {
   const isUser = role === "User";
   const alignmentClass = isUser ? "self-end gap-1" : "self-start gap-[8px]";
-  const textAlignClass = isUser ? "text-right" : "text-left";
+  const bgAlignClass =isUser ? "bg-red-200 rounded-t-xl rounded-es-xl ml-8": "bg-sky-300 rounded-e-xl rounded-es-xl mr-8 "
+  const textAlignClass = isUser ? "text-left" : "text-left";
   const messageContainerClass = isUser
-    ? "userMessageContainer"
+    ? "userMessageContainer "
     : "aiMessageContainer";
   const contentClass = isUser
-    ? "text-gray-900 dark:text-white"
+    ? "text-gray-900 dark:text-white "
     : "text-gray-700 dark:text-gray-300";
 
   return (
@@ -49,9 +50,9 @@ export default function ChatBubble({
         } space-x-1 rtl:space-x-reverse ${messageContainerClass}`}
       >
         <div
-          className={`flex flex-col leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700 ${textAlignClass}`}
+          className={`flex flex-col leading-1.5 p-4 border-gray-200 ${bgAlignClass}   ${textAlignClass}`}
         >
-          <p className={`text-sm font-normal ${contentClass}`}>
+          <p className={`text-sm  font-normal ${contentClass}`}>
             {isLoading ? <LoadingDots /> : content}{" "}
             {/* Show LoadingDots if isLoading */}
           </p>

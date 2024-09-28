@@ -17,7 +17,7 @@ import handleDeductCredit  from "../components/creditButton";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CgPushChevronRight } from "react-icons/cg";
-import { div } from "framer-motion/client";
+import FaceDetection from "./FaceDetection"
 interface Prompt {
   id: string;
   src: string;
@@ -560,7 +560,7 @@ export default function HomePage() {
                   <button
                     className={`px-4 md:px-12 py-2 rounded-full ${
                       hasMoreImages()
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#2563ec] text-white"
                         : "bg-slate-400 text-white"
                     }`}
                     onClick={handleLoadMore}
@@ -585,10 +585,10 @@ export default function HomePage() {
                   </button>
                 </div>
                 <div className="my-4 flex flex-col lg:flex-row justify-center items-center lg:gap-2">
-                  <div className="text-blue-600 font-raleway font-normal  ">
+                  <div className="text-[#2563ec] font-raleway font-normal  ">
                     sponsored results by{" "}
                   </div>
-                  <div className="uppercase text-blue-600 font-raleway font-bold">
+                  <div className="uppercase text-[#2563ec] font-raleway font-extrabold">
                     ERAM LABS
                   </div>
                 </div>
@@ -597,16 +597,16 @@ export default function HomePage() {
           </div>
 
           {/* Right Side Panel for large desktop */}
-          <div className="hidden xl:block m-8 justify-center border-4 border-dotted border-gray-500 bg-[#24272c] rounded-3xl  flex-row items-center w-2/3">
+          <div className="hidden xl:block m-8 justify-center border-4 border-dotted border-gray-500 bg-[#3f4044] rounded-3xl  flex-row items-center w-2/3">
 
             <div className=" flex px-8 py-12 h-full ">
-              <div className="flex flex-col rounded-3xl bg-[#2F4F4F] xl:w-1/2 2xl:w-2/5 ">
+              <div className="flex flex-col rounded-3xl bg-[#3a3b40] xl:w-1/2 2xl:w-2/5 ">
                 {/* Image Upload Section */}
                 <div className="flex w-full h-2/3">
                   {" "}
                   {/* Image Upload Section */}
                   <div
-                    className="relative w-full text-center rounded-2xl hover:bg-[#3b3e44] gap-12 flex flex-col items-center justify-center"
+                    className="relative w-full text-center rounded-2xl hover:bg-[#3f5061] gap-12 flex flex-col items-center justify-center"
                     style={{ color: "#ffffff" }}
                     onDrop={handleDrop}
                     onDragOver={handleDragOver}
@@ -614,7 +614,7 @@ export default function HomePage() {
                     <img
                       src="/images/New/default_img.png"
                       alt="Upload Icon"
-                      className=" w-35 h-35 text-gray-600"
+                      className=" w-35 h-35 mt-16 text-gray-600"
                     />
                     <span className="text-gray-400  font-raleway font-medium text-xl">
                       No Photo edit yet
@@ -650,14 +650,14 @@ export default function HomePage() {
                               key={index}
                               className="relative bg-gray-200  rounded-lg overflow-hidden flex items-center justify-center"
                             >
-                              {/* Image Styling */}
-                              <img
+                            
+                              {/* <img
                                 src={URL.createObjectURL(file)}
                                 alt={file.name}
                                 className="w-full h-full object-contain bg-[#35383d]"
-                              />
-
-                              {/* Close Button */}
+                              /> */}
+                             <FaceDetection uploadedImage={file}/>
+                             
                               <RiCloseCircleFill
                                 size={30}
                                 className="absolute top-2 right-2 cursor-pointer"
@@ -665,6 +665,7 @@ export default function HomePage() {
                               />
                             </div>
                           ))}
+                       
                         </div>
                       )}{" "}
                     </label>
@@ -680,7 +681,7 @@ export default function HomePage() {
                       <div className="flex relative w-full ">
                         <button
                           onClick={() => setIsModalOpen(!isModalOpen)}
-                          className="flex items-center text-white  py-2 w-full justify-center rounded-full border bg-[#464950] hover:bg-[#32353a] border-white"
+                          className="flex items-center text-white  py-2 w-full justify-center rounded-full border bg-[#3a3b40] hover:bg-[#313236] border-white"
                         >
                           <div>
                             <IoCameraSharp size={30} />
@@ -724,7 +725,7 @@ export default function HomePage() {
                       <div className="flex relative w-full ">
                         <button
                           onClick={() => setIsModalOpen1(true)}
-                          className="flex items-center rounded-full w-full justify-center border bg-[#464950] hover:bg-[#32353a] border-white text-white  py-4"
+                          className="flex items-center rounded-full w-full justify-center border bg-[#3a3b40] hover:bg-[#313236] border-white text-white  py-4"
                         >
                           <div className="px-1 text-white rounded-0 text-sm ml-1 border-2 border-white">
                             {selectedAspectRatioLabel}
@@ -739,7 +740,7 @@ export default function HomePage() {
                     {/* Change Image Button in the Next Row */}
                     <div className="flex justify-center items-center">
                       <button
-                        className="w-full m-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-raleway font-normal flex items-center justify-center py-2 gap-5 rounded-3xl"
+                        className="w-full m-4 bg-[#2563ec] hover:bg-blue-700 text-white text-sm font-raleway font-normal flex items-center justify-center py-2 gap-5 rounded-3xl"
                         onClick={() => {
                           // Trigger file input click to upload/change images
                           const fileInput =
@@ -839,7 +840,7 @@ export default function HomePage() {
                     <div className="flex flex-col gap-5 justify-center items-center ">
                       <button
                         onClick={handleGenerateNewImage}
-                        className="flex w-full xl:w-2/3   bg-blue-600 justify-center font-raleway font-normal text-white py-4 rounded-full hover:bg-sky-700 "
+                        className="flex w-full xl:w-2/3   bg-[#2563ec] justify-center font-raleway font-normal text-white py-4 rounded-full hover:bg-sky-700 "
                       >
                         Re-Genreate
                       </button>
@@ -866,8 +867,8 @@ export default function HomePage() {
                         }}
                         className={`text-white p-4 w-full xl:w-2/3 rounded-full transition-colors ${
                           isGenerating
-                            ? "bg-blue-600 cursor-not-allowed font-raleway font-normal"
-                            : "bg-blue-600 hover:bg-blue-700 font-raleway font-normal"
+                            ? "bg-[#2563ec] cursor-not-allowed font-raleway font-normal"
+                            : "bg-[#2563ec] hover:bg-blue-700 font-raleway font-normal"
                         }`}
                         disabled={isGenerating}
                       >
@@ -978,7 +979,7 @@ export default function HomePage() {
                     <div className="flex  relative w-full ">
                       <button
                         onClick={() => setIsModalOpen(!isModalOpen)}
-                        className="flex items-center text-white  py-1 text-sm w-full justify-center rounded-full border bg-[#464950] hover:bg-[#2d2f33]  border-white"
+                        className="flex items-center text-white  py-1 text-sm w-full justify-center rounded-full border bg-[#3a3b40] hover:bg-[#313236]  border-white"
                       >
                         <div className="mx-1 sm:mx-2">
                           <IoCameraSharp size={20} />
@@ -1020,7 +1021,7 @@ export default function HomePage() {
                     </div>
                     <div className="hidden lg:block w-full justify-center items-center">
                       <button
-                        className="w-full  bg-blue-500 hover:bg-blue-600 font-raleway font-normal text-white text-xs sm:text-sm md:text-md flex items-center justify-center py-2  rounded-full"
+                        className="w-full bg-[#2563ec] hover:bg-blue-700 font-raleway font-normal text-white text-xs sm:text-sm md:text-md flex items-center justify-center py-2  rounded-full"
                         onClick={() => {
                           if (uploadedImages.length > 0) {
                             // If images exist, trigger the change image functionality
@@ -1058,7 +1059,7 @@ export default function HomePage() {
                     <div className="flex relative w-full ">
                       <button
                         onClick={() => setIsModalOpen1(true)}
-                        className="flex items-center rounded-full w-full justify-center border bg-[#464950] hover:bg-[#2d2f33] border-white text-white  sm:py-3"
+                        className="flex items-center rounded-full w-full justify-center border bg-[#3a3b40] hover:bg-[#313236] border-white text-white  sm:py-3"
                       >
                         <div className="px-1 text-white rounded-0 text-xs sm:text-sm md:text-md ml-1 border-2 border-white">
                           {selectedAspectRatioLabel}
@@ -1179,7 +1180,7 @@ export default function HomePage() {
                 <div className="flex flex-col  justify-center h-1/4 items-center">
                   <button
                     onClick={handleGenerateNewImage}
-                    className="flex w-full sm:w-1/2 bg-blue-600 justify-center font-raleway font-normal text-white py-2 rounded-full hover:bg-sky-700 "
+                    className="flex w-full sm:w-1/2 bg-[#2563ec] justify-center font-raleway font-normal text-white py-2 rounded-full hover:bg-sky-700 "
                   >
                     Re-Genreate
                   </button>
