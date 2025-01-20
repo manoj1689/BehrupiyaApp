@@ -18,6 +18,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CgPushChevronRight } from "react-icons/cg";
 import FaceDetection from "./FaceDetection"
+import SignInModal from "../components/Modal/SignInModal"
+
 interface Prompt {
   id: string;
   src: string;
@@ -67,7 +69,10 @@ export default function HomePage() {
 
   const [selectedImageSize, setSelectedImageSize] = useState("512px*512px");
   const [isModalOpen1, setIsModalOpen1] = useState(false);
+  const [isSignInModalOpen, setIsSignInModalOpen] = useState<boolean>(false);
 
+  const openSignInModal = () => setIsSignInModalOpen(true);
+  const closeSignInModal = () => setIsSignInModalOpen(false);
   const aspectRatios = [
     { label: "1:1", value: "512px*512px", icon: "□" },
     { label: "4:3", value: "680px*384px", icon: "▭" },
@@ -359,7 +364,8 @@ export default function HomePage() {
       return;
     }
     if (!session) {
-      signIn("google"); // Redirects to Google sign-in
+     // signIn("google"); // Redirects to Google sign-in
+     openSignInModal();
       return;
     }
    if(state >0){
@@ -393,7 +399,7 @@ export default function HomePage() {
           draggable
           pauseOnHover
         />
-    
+      <SignInModal open={isSignInModalOpen} onClose={closeSignInModal} />
         <div className="w-full p-2 text-white text-center">
           <h1 className="text-lg:sm:text-xl font-raleway font-bold uppercase">
             Unleash your inner Behrupiya
